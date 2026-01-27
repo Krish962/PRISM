@@ -1,0 +1,22 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Environment
+.env
+
+# Runtime files
+temp/
+jobs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+venv/
+__pycache__/
+
+# Large generated data
+soil_profiles_*.json
+climate_cache/

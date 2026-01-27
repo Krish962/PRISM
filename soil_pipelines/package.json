@@ -1,0 +1,15 @@
+{
+  "name": "soil_pipelines",
+  "version": "1.0.0",
+  "main": "ingest_soil.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "mongoose": "^9.1.5"
+  }
+}
