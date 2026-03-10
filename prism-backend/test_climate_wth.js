@@ -26,9 +26,9 @@ try {
     outputPath: jobFolder
   });
 
-  console.log("✅ Climate .WTH file generated successfully!");
-  console.log("📂 File path:", filePath);
+  console.log("Climate .WTH file generated successfully!");
+  console.log("File path:", filePath);
 
 } catch (error) {
-  console.error("❌ Climate generation failed:", error.message);
+  console.error("Climate generation failed:", error.message);
 }

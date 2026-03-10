@@ -13,11 +13,16 @@ const dailyClimateSchema = new mongoose.Schema(
 
 const climateSchema = new mongoose.Schema({
   grid_id: { type: String, required: true },
+
   latitude: { type: Number, required: true },
   longitude: { type: Number, required: true },
+
+  elevation: { type: Number, default: 0 }, // meters (needed for DSSAT)
+
   resolution_deg: { type: Number, default: 0.25 },
 
   year: { type: Number, required: true },
+
   source: { type: String, default: "NASA POWER" },
 
   daily: {
@@ -34,7 +39,10 @@ const climateSchema = new mongoose.Schema({
   }
 });
 
-// Critical index
+// Grid lookup
 climateSchema.index({ grid_id: 1, year: 1 }, { unique: true });
+
+// Useful for nearest-grid queries
+climateSchema.index({ latitude: 1, longitude: 1 });
 
 export default mongoose.model("Climate", climateSchema);

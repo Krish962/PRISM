@@ -40,9 +40,9 @@ try {
     outputPath: jobFolder
   });
 
-  console.log("✅ .RIX file generated successfully!");
-  console.log("📂 File path:", filePath);
+  console.log(".RIX file generated successfully!");
+  console.log("File path:", filePath);
 
 } catch (error) {
-  console.error("❌ Management generation failed:", error.message);
+  console.error("Management generation failed:", error.message);
 }
