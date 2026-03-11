@@ -1,16 +1,17 @@
 import express from "express";
+import simulationRoutes from "./routes/simulation.routes.js";
 
 const app = express();
 
-// Middleware
 app.use(express.json());
 
-// Health check route
 app.get("/health", (req, res) => {
   res.json({
     status: "UP",
     message: "PRISM backend is running"
   });
 });
+
+app.use("/api", simulationRoutes);
 
 export default app;

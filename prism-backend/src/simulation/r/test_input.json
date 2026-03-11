@@ -1,0 +1,37 @@
+{
+  "location": {
+    "latitude": 22.43,
+    "longitude": 47.25
+  },
+  "climate": {
+    "year": 2024,
+    "daily": [
+      { "doy": 1, "srad": 18, "tmax": 30, "tmin": 22, "rain": 0 }
+    ]
+  },
+  "soil": {
+    "layers": [
+      {
+        "bottom_depth_cm": 5,
+        "clay": 30,
+        "silt": 40,
+        "bulk_density": 1.3,
+        "field_capacity": 0.32,
+        "wilting_point": 0.15
+      }
+    ]
+  },
+  "genotype": {
+    "variety_code": "IR64",
+    "P1": 620,
+    "P2R": 80,
+    "P5": 500,
+    "G1": 55,
+    "G2": 0.025,
+    "G3": 1.2,
+    "G4": 1
+  },
+  "management": {
+    "planting_date": "2024-07-01"
+  }
+}
