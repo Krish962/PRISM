@@ -1,48 +1,42 @@
 import { spawn } from "child_process";
 import fs from "fs";
 import path from "path";
-import { v4 as uuidv4 } from "uuid";
+import { fileURLToPath } from "url";
 
-export const runSimulation = async (simulationInput) => {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export async function runSimulation(inputData) {
+
+  const inputPath = path.join(__dirname, "simulation_input.json");
+  const outputPath = path.join(__dirname, "simulation_output.json");
+
+  // write JSON input file
+  fs.writeFileSync(inputPath, JSON.stringify(inputData, null, 2));
+
+  const rScript = path.join(__dirname, "r", "run_dssat.R");
+
   return new Promise((resolve, reject) => {
 
-    const jobId = uuidv4();
-
-    const jobDir = path.join(process.cwd(), "simulation_jobs", jobId);
-
-    fs.mkdirSync(jobDir, { recursive: true });
-
-    const inputPath = path.join(jobDir, "input.json");
-    const outputPath = path.join(jobDir, "result.json");
-
-    fs.writeFileSync(inputPath, JSON.stringify(simulationInput, null, 2));
-
-    const rScriptPath = path.join(
-      process.cwd(),
-      "src",
-      "simulation",
-      "r",
-      "run_dssat.R"
-    );
-
-    const rProcess = spawn("Rscript", [
-      rScriptPath,
+    const r = spawn("Rscript", [
+      rScript,
       inputPath,
       outputPath
     ]);
 
-    rProcess.stdout.on("data", (data) => {
-      console.log(`R: ${data}`);
+    r.stdout.on("data", data => {
+      console.log("R:", data.toString());
     });
 
-    rProcess.stderr.on("data", (data) => {
-      console.error(`R ERROR: ${data}`);
+    r.stderr.on("data", data => {
+      console.error("R ERROR:", data.toString());
     });
 
-    rProcess.on("close", (code) => {
+    r.on("close", code => {
 
       if (code !== 0) {
-        return reject(new Error("Simulation failed"));
+        reject(new Error("Simulation failed"));
+        return;
       }
 
       try {
@@ -51,10 +45,7 @@ export const runSimulation = async (simulationInput) => {
           fs.readFileSync(outputPath)
         );
 
-        resolve({
-          jobId,
-          result
-        });
+        resolve(result);
 
       } catch (err) {
         reject(err);
@@ -63,4 +54,5 @@ export const runSimulation = async (simulationInput) => {
     });
 
   });
-};
+
+}
