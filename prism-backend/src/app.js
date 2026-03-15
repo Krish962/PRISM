@@ -12,6 +12,6 @@ app.get("/health", (req, res) => {
   });
 });
 
-app.use("/api", simulationRoutes);
+app.use("/api/simulation", simulationRoutes);
 
 export default app;

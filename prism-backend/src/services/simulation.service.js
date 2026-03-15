@@ -1,40 +1,63 @@
-import { findNearestSoil } from "../data-access/soil.repository.js";
-import { findClimateByLocation } from "../data-access/climate.repository.js";
-import { findGenotypeByCode } from "../data-access/variety.repository.js";
-import { buildSimulationInput } from "../simulation/inputBuilder.js";
-import { runSimulation } from "../simulation/runSimulation.js";
+import fs from "fs";
+import path from "path";
+import os from "os";
+import { spawn } from "child_process";
+import { v4 as uuidv4 } from "uuid";
 
-export const runSimulationService = async ({
-  latitude,
-  longitude,
-  varietyCode,
-  management
-}) => {
+export async function runSimulation(inputData) {
 
-  // 1. Get soil
-  const soil = await findNearestSoil(latitude, longitude);
+  const simId = uuidv4();
 
-  // 2. Get climate
-  const climate = await findClimateByLocation(latitude, longitude);
+  const simDir = path.join(os.tmpdir(), "prism_" + simId);
 
-  // 3. Get genotype
-  const genotype = await findGenotypeByCode(varietyCode);
+  fs.mkdirSync(simDir);
 
-  if (!soil) throw new Error("Soil data not found");
-  if (!climate) throw new Error("Climate data not found");
-  if (!genotype) throw new Error("Genotype not found");
+  console.log("Simulation started:", simId);
 
-  // 4. Build simulation input
-  const simulationInput = buildSimulationInput({
-        location: { latitude, longitude },
-        climate,
-        soil,
-        genotype,
-        management
-   });
+  const inputPath = path.join(simDir, "input.json");
+  const outputPath = path.join(simDir, "output.json");
 
-  // 5. Run simulation
-  const result = await runSimulation(simulationInput);
+  fs.writeFileSync(inputPath, JSON.stringify(inputData, null, 2));
 
-  return result;
-};
+  return new Promise((resolve, reject) => {
+
+    const rProcess = spawn("Rscript", [
+      "src/simulation/r/run_dssat.R",
+      inputPath,
+      outputPath
+    ]);
+
+    rProcess.stdout.on("data", data => {
+      console.log(data.toString());
+    });
+
+    rProcess.stderr.on("data", data => {
+      console.error(data.toString());
+    });
+
+    rProcess.on("close", () => {
+
+  try {
+
+    if (!fs.existsSync(outputPath)) {
+      throw new Error("Simulation failed: output.json not produced")
+    }
+
+
+      const result = JSON.parse(
+        fs.readFileSync(outputPath)
+      );
+        resolve(result);
+      } catch (err) {
+        reject(err);
+      } finally {
+        console.log("Simulation finished:", simId);
+        console.log("Cleaning simulation folder:", simDir);
+        fs.rmSync(simDir, { recursive: true, force: true });
+      }
+
+    });
+
+  });
+
+}

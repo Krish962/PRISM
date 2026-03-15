@@ -1,35 +1,24 @@
-import { runSimulationService } from "../services/simulation.service.js";
+import { runSimulation } from "../services/simulation.service.js";
 
-export const simulate = async (req, res) => {
+export async function runSimulationController(req, res) {
 
   try {
 
-    const {
-      latitude,
-      longitude,
-      varietyCode,
-      management
-    } = req.body;
-
-    const result = await runSimulationService({
-      latitude,
-      longitude,
-      varietyCode,
-      management
-    });
+    const result = await runSimulation(req.body);
 
     res.json({
-      success: true,
+      status: "success",
       result
     });
 
   } catch (err) {
 
+    console.error(err);
+
     res.status(500).json({
-      success: false,
-      error: err.message
+      error: "Simulation failed"
     });
 
   }
 
-};
+}

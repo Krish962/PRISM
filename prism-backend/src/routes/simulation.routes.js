@@ -1,8 +1,8 @@
 import express from "express";
-import { simulate } from "../controllers/simulation.controller.js";
+import { runSimulationController } from "../controllers/simulation.controller.js";
 
 const router = express.Router();
 
-router.post("/simulate", simulate);
+router.post("/run", runSimulationController);
 
 export default router;
