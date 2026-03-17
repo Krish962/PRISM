@@ -1,14 +1,88 @@
-library(DSSAT)
+suppressPackageStartupMessages({
+  library(DSSAT)
+})
 
-filex <- read_filex("template.RIX")
+TEMPLATE_PATH <- "C:/Users/asus/PRISM/prism-backend/src/simulation/templates/template.SOL"
 
-cat("\n--- IRRIGATION AND WATER MANAGEMENT ---\n")
-str(filex$`IRRIGATION AND WATER MANAGEMENT`)
+cat("\n==================== LOAD TEMPLATE ====================\n")
 
-cat("\n--- FERTILIZERS (INORGANIC) ---\n")
-str(filex$`FERTILIZERS (INORGANIC)`)
+template <- DSSAT::read_sol(TEMPLATE_PATH)
 
-cat("\n--- PLANTING DETAILS ---\n")
-str(filex$`PLANTING DETAILS`)
+# ------------------------------------------------
+# TOP LEVEL STRUCTURE
+# ------------------------------------------------
+cat("\n--- TEMPLATE STRUCTURE ---\n")
+str(template)
 
-str(filex)
+# ------------------------------------------------
+# SOIL OBJECT STRUCTURE
+# ------------------------------------------------
+cat("\n--- template$SOIL STRUCTURE ---\n")
+str(template$SOIL)
+
+cat("\n--- template$SOIL CLASS ---\n")
+print(class(template$SOIL))
+
+cat("\n--- template$SOIL DIMENSIONS ---\n")
+print(dim(template$SOIL))
+
+cat("\n--- template$SOIL COLUMN NAMES ---\n")
+print(names(template$SOIL))
+
+# ------------------------------------------------
+# CHECK EACH COLUMN TYPE
+# ------------------------------------------------
+cat("\n==================== COLUMN TYPES ====================\n")
+
+for(col in names(template$SOIL)){
+  cat("\nCOLUMN:", col, "\n")
+  print(class(template$SOIL[[col]]))
+
+  if(is.list(template$SOIL[[col]])){
+    cat(" -> This is a LIST column\n")
+    cat(" -> Length of list:", length(template$SOIL[[col]]), "\n")
+
+    if(length(template$SOIL[[col]]) > 0){
+      cat(" -> Type inside list:\n")
+      print(class(template$SOIL[[col]][[1]]))
+
+      cat(" -> First few values:\n")
+      print(head(template$SOIL[[col]][[1]]))
+    }
+  } else {
+    cat(" -> Normal column\n")
+    print(template$SOIL[[col]])
+  }
+}
+
+# ------------------------------------------------
+# CHECK ONE FULL ROW
+# ------------------------------------------------
+cat("\n==================== FIRST ROW ====================\n")
+print(template$SOIL[1, ])
+
+# ------------------------------------------------
+# CHECK LIST COLUMN LENGTH CONSISTENCY
+# ------------------------------------------------
+cat("\n==================== LAYER LENGTH CHECK ====================\n")
+
+for(col in names(template$SOIL)){
+  if(is.list(template$SOIL[[col]])){
+    cat(col, "-> length:", length(template$SOIL[[col]][[1]]), "\n")
+  }
+}
+
+# ------------------------------------------------
+# CHECK HOW DSSAT EXPECTS STRUCTURE
+# ------------------------------------------------
+cat("\n==================== FINAL SUMMARY ====================\n")
+
+cat("Rows:", nrow(template$SOIL), "\n")
+cat("Columns:", ncol(template$SOIL), "\n")
+
+cat("\nIMPORTANT OBSERVATIONS:\n")
+cat("- If columns are LIST → must assign using list(vector)\n")
+cat("- If columns are numeric → assign directly\n")
+cat("- If mixed → handle column-wise\n")
+
+cat("\n==================== END ====================\n")

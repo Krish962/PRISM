@@ -9,6 +9,10 @@ generate_weather_config <- function(lat, lon, start_year, end_year, elevation = 
 
   cat("Downloading weather from NASA POWER\n")
 
+  # ensure numeric values
+  lat <- as.numeric(lat)
+  lon <- as.numeric(lon)
+
   weather <- get_weather_data(
     lon = lon,
     lat = lat,
@@ -16,14 +20,14 @@ generate_weather_config <- function(lat, lon, start_year, end_year, elevation = 
     res = "daily",
     from = paste0(start_year,"-01-01"),
     to   = paste0(end_year,"-12-31"),
-    src = "nasa_power"
+    src  = "nasa_power"
   )
 
   daily <- weather$WEATHER_DAILY
 
   weather_df <- daily %>%
     transmute(
-      DATE = YYYYMMDD,
+      DATE = as.Date(YYYYMMDD),
       SRAD = ALLSKY_SFC_SW_DWN,
       TMAX = T2M_MAX,
       TMIN = T2M_MIN,
@@ -31,11 +35,9 @@ generate_weather_config <- function(lat, lon, start_year, end_year, elevation = 
     ) %>%
     arrange(DATE)
 
-  # Compute DSSAT statistics
   tav <- calc_TAV(weather_df)
   amp <- calc_AMP(weather_df)
 
-  # Convert DATE to DSSAT YYDDD format
   weather_df <- weather_df %>%
     mutate(
       DATE = as.integer(
@@ -58,13 +60,11 @@ generate_weather_config <- function(lat, lon, start_year, end_year, elevation = 
   return(weather_config)
 }
 
-
 write_weather_file <- function(weather_config, file_name="PRSM.WTH"){
 
   write_wth(
     wth = weather_config$data,
     file_name = file_name,
-
     force_std_fmt = TRUE,
 
     location = NULL,
@@ -80,7 +80,7 @@ write_weather_file <- function(weather_config, file_name="PRSM.WTH"){
 
     REFHT = NULL,
     WNDHT = NULL,
-    CO2 = NULL
+    CO2   = NULL
   )
 
   cat("Weather file written:", file_name, "\n")

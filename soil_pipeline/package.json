@@ -1,5 +1,5 @@
 {
-  "name": "soil_pipelines",
+  "name": "soil_pipeline",
   "version": "1.0.0",
   "main": "ingest_soil.js",
   "scripts": {
@@ -10,6 +10,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "mongoose": "^9.1.5"
+    "mongodb": "^7.1.0"
   }
 }

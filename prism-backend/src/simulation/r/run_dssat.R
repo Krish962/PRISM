@@ -55,11 +55,13 @@ setwd(simulation_dir)
 
 # -------------------------------------------
 
+
 input <- fromJSON(input_file)
 
-lat <- input$location$latitude
-lon <- input$location$longitude
+lat <- input$latitude
+lon <- input$longitude
 
+cat("DEBUG lat:", lat, "lon:", lon, "\n")
 # -------------------------------------------
 
 # .WTH file creation
@@ -90,8 +92,7 @@ cat("Weather pipeline finished\n")
 # -------------------------------------------
 
 soil_config <- generate_soil_config(
-lon,
-lat
+  input$soil
 )
 
 write_soil_file(soil_config)
