@@ -6,12 +6,12 @@ PRISM is a web-based decision support system for simulating paddy rice growth us
 
 ## System Overview
 Frontend (React)
-↓
+->
 Backend API (Node.js / Express)
-↓
+->
 R Integration (DSSAT Execution)
-↓
-Output Parsing → JSON → Frontend Visualization
+->
+Output Parsing -> JSON -> Frontend Visualization
 
 
 ---
