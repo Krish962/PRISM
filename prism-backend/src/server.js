@@ -6,7 +6,7 @@ const startServer = async () => {
   await connectDB();
 
   app.listen(env.PORT, () => {
-    console.log(`🚀 PRISM backend running on port ${env.PORT}`);
+    console.log(`PRISM backend running on port ${env.PORT}`);
   });
 };
 

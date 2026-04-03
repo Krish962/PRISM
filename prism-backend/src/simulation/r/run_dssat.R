@@ -25,9 +25,7 @@ source(file.path(script_dir, "weather_generator.R"))
 source(file.path(script_dir, "soil_generator.R"))
 source(file.path(script_dir, "filex_generator.R"))
 # -------------------------------------------
-
 # Read command line arguments
-
 # -------------------------------------------
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -41,18 +39,14 @@ output_file <- args[2]
 }
 
 # -------------------------------------------
-
 # Set working directory to simulation folder
-
 # -------------------------------------------
 
 simulation_dir <- dirname(normalizePath(input_file))
 setwd(simulation_dir)
 
 # -------------------------------------------
-
 # Load input JSON
-
 # -------------------------------------------
 
 
@@ -63,9 +57,7 @@ lon <- input$longitude
 
 cat("DEBUG lat:", lat, "lon:", lon, "\n")
 # -------------------------------------------
-
 # .WTH file creation
-
 # -------------------------------------------
 
 plant_date  <- as.Date(input$management$planting$date)
@@ -86,9 +78,7 @@ write_weather_file(weather_config)
 cat("Weather pipeline finished\n")
 
 # -------------------------------------------
-
 # .SOL file creation
-
 # -------------------------------------------
 
 soil_config <- generate_soil_config(
@@ -100,9 +90,7 @@ write_soil_file(soil_config)
 cat("Soil pipeline finished\n")
 
 # -------------------------------------------
-
 # .X file creation
-
 # -------------------------------------------
 
 input <- jsonlite::fromJSON(input_file)
@@ -123,9 +111,7 @@ write_filex_file(filex)
 cat("FileX pipeline finished\n")
 
 # -------------------------------------------
-
 # Batch creation and simulation run
-
 # -------------------------------------------
 
 write_dssbatch(
@@ -144,26 +130,26 @@ options(DSSAT.CSM = "C:/DSSAT48/DSCSM048.EXE")
 run_dssat(run_mode = "B")
 
 # -------------------------------------------
-
 # Extract and Format Results
-
 # -------------------------------------------
-
 pg <- read_output("PlantGro.OUT")
 
 final <- tail(pg, 1)
 
 results <- list(
-yield_kg_ha = final$GWAD,
-biomass_kg_ha = final$CWAD
+  yield_kg_ha = final$GWAD,
+  biomass_kg_ha = final$CWAD,
+  harvest_index = final$HIAD,
+  max_lai = max(pg$LAID, na.rm = TRUE),
+  growth_duration = max(pg$DAS, na.rm = TRUE),
+  lai_series = data.frame(day = pg$DAS, lai = pg$LAID),
+  biomass_series = data.frame(day = pg$DAS, biomass = pg$CWAD)
 )
 
-print(results)
+#print(results)
 
 # -------------------------------------------
-
 # Write results to JSON for backend
-
 # -------------------------------------------
 
 write_json(results, output_file, auto_unbox = TRUE, pretty = TRUE)
