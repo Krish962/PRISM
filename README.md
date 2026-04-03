@@ -96,7 +96,7 @@ The backend manages simulation execution, DSSAT integration, and output processi
     { "day": 12, "biomass": 138 }
   ]
 }
-
+```
 ## Data Flow
 
 1. User inputs simulation parameters via frontend
