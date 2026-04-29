@@ -136,6 +136,16 @@ pg <- read_output("PlantGro.OUT")
 
 final <- tail(pg, 1)
 
+ghg <- read_output("GHG.OUT")
+tceqc_parsed <- tail(ghg$TCEQC, 1)
+
+SoilWat <- read_output("SoilWat.OUT")
+total_precipitation <- tail(SoilWat$PREC, 1)
+total_drainage <- tail(SoilWat$DRNC, 1)
+
+etDat <- read_output("ET.OUT")
+total_ET <- tail(etDat$ETAC, 1)
+
 results <- list(
   yield_kg_ha = final$GWAD,
   biomass_kg_ha = final$CWAD,
@@ -143,10 +153,17 @@ results <- list(
   max_lai = max(pg$LAID, na.rm = TRUE),
   growth_duration = max(pg$DAS, na.rm = TRUE),
   lai_series = data.frame(day = pg$DAS, lai = pg$LAID),
-  biomass_series = data.frame(day = pg$DAS, biomass = pg$CWAD)
+  biomass_series = data.frame(day = pg$DAS, biomass = pg$CWAD),
+  tceqc = tceqc_parsed,
+  total_drainage = total_drainage,
+  total_precipitation = total_precipitation,
+  total_ET = total_ET
 )
 
 #print(results)
+
+
+
 
 # -------------------------------------------
 # Write results to JSON for backend

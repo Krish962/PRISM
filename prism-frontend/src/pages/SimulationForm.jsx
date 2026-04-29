@@ -49,7 +49,7 @@ function SimulationForm() {
 
   const cultivars = [
     { code: "IB0055", name: "Basmati 385" },
-    { code: "IR064", name: "IR64" }
+    { code: "IB0015", name: "IR64" }
   ];
 
   const addIrrigation = () => {
@@ -143,13 +143,110 @@ function SimulationForm() {
     try {
       setLoading(true);
 
-      const payload = buildPayload(formData);
+      const originalFertilizers = formData.management.fertilizerSchedules;
+
+      let convertedFertilizers = [];
+
+      // 🔥 totals for future CO₂
+      const fertilizerTotals = {
+        UREA: 0,
+        DAP: 0,
+        MOP: 0,
+        KNO3: 0,
+        AN: 0
+      };
+
+      originalFertilizers.forEach((f) => {
+        const amount = Number(f.amount || 0);
+        const date = f.date;
+
+        // update totals
+        if (fertilizerTotals[f.type] !== undefined) {
+          fertilizerTotals[f.type] += amount;
+        }
+
+        switch (f.type) {
+          case "UREA":
+            convertedFertilizers.push({
+              date,
+              type: "N",
+              amount: amount * 0.46
+            });
+            break;
+
+          case "DAP":
+            convertedFertilizers.push({
+              date,
+              type: "N",
+              amount: amount * 0.18
+            });
+            convertedFertilizers.push({
+              date,
+              type: "P",
+              amount: amount * 0.46
+            });
+            break;
+
+          case "MOP":
+            convertedFertilizers.push({
+              date,
+              type: "K",
+              amount: amount * 0.60
+            });
+            break;
+
+          case "AN":
+            convertedFertilizers.push({
+              date,
+              type: "N",
+              amount: amount * 0.35
+            });
+            break;
+
+          case "KNO3":
+            convertedFertilizers.push({
+              date,
+              type: "N",
+              amount: amount * 0.13
+            });
+            convertedFertilizers.push({
+              date,
+              type: "K",
+              amount: amount * 0.44
+            });
+            break;
+
+          default:
+            break;
+        }
+      });
+
+
+      const updatedFormData = {
+        ...formData,
+        management: {
+          ...formData.management,
+          fertilizerSchedules: convertedFertilizers,
+          totalFertilizers: fertilizerTotals
+        }
+      };
+
+      console.log("CONVERTED FERTILIZERS:", convertedFertilizers);
+      console.log("FERTILIZER TOTALS:", fertilizerTotals);
+
+      const payload = buildPayload(updatedFormData);
 
       console.log("FINAL PAYLOAD:", payload);
 
       const result = await runSimulation(payload);
+      console.log("RESULT: " ,result);
 
-      navigate("/results", { state: result });
+      navigate("/results", {
+        state: {
+          simulationInputs: updatedFormData,
+          simulationResults: result
+        }
+      });
 
     } catch (err) {
       console.error(err);
@@ -332,9 +429,12 @@ function SimulationForm() {
               }
             >
               <option value="">Type</option>
-              <option value="N">Nitrogen</option>
-              <option value="P">Phosphorus</option>
-              <option value="K">Potassium</option>
+              <option value="UREA">Urea</option>
+              <option value="DAP">DAP</option>
+              <option value="MOP">MOP</option>
+              <option value="KNO3">Potassium Nitrate</option>
+              <option value="AN">Ammonium Nitrate</option>
+
             </select>
             <input type="number" placeholder="Amount (Kg/ha)" value={item.amount}
               onChange={(e) =>

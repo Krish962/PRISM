@@ -24,6 +24,13 @@ export const buildPayload = (formData) => {
         type: f.type,
         amount: Number(f.amount)
       })),
+      totalFertilizers: {
+        UREA: Number(formData.management.totalFertilizers?.UREA || 0),
+        DAP: Number(formData.management.totalFertilizers?.DAP || 0),
+        MOP: Number(formData.management.totalFertilizers?.MOP || 0),
+        KNO3: Number(formData.management.totalFertilizers?.KNO3 || 0),
+        AN: Number(formData.management.totalFertilizers?.AN || 0)
+      },
       harvestDate: formData.management.harvestDate
     }
   };
