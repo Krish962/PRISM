@@ -13,17 +13,57 @@ generate_weather_config <- function(lat, lon, start_year, end_year, elevation = 
   lat <- as.numeric(lat)
   lon <- as.numeric(lon)
 
+  # --------------------------------------------------
+  # NASA POWER currently has data only up to 2025.
+  # If future years are requested, download only 2025
+  # and later duplicate it.
+  # --------------------------------------------------
+
+  duplicate_future <- FALSE
+
+  download_start_year <- start_year
+  download_end_year   <- end_year
+
+  if (start_year > 2025) {
+    download_start_year <- 2025
+    duplicate_future <- TRUE
+  }
+
+  if (end_year > 2025) {
+    download_end_year <- 2025
+    duplicate_future <- TRUE
+  }
+
   weather <- get_weather_data(
     lon = lon,
     lat = lat,
     pars = c("air_temperature","precipitation","solar_radiation"),
     res = "daily",
-    from = paste0(start_year,"-01-01"),
-    to   = paste0(end_year,"-12-31"),
+    from = paste0(download_start_year, "-01-01"),
+    to   = paste0(download_end_year, "-12-31"),
     src  = "nasa_power"
   )
 
   daily <- weather$WEATHER_DAILY
+
+  # --------------------------------------------------
+  # If future weather was requested, duplicate the
+  # downloaded year(s) by shifting one year forward.
+  # --------------------------------------------------
+
+  if (duplicate_future) {
+
+    daily_future <- daily
+
+    daily_future$YYYYMMDD <-
+      lubridate::ymd(daily_future$YYYYMMDD) + years(1)
+
+    daily <- bind_rows(
+      daily,
+      daily_future
+    ) %>%
+      arrange(YYYYMMDD)
+  }
 
   weather_df <- daily %>%
     transmute(
@@ -67,7 +107,7 @@ write_weather_file <- function(weather_config, file_name="PRSM.WTH"){
     file_name = file_name,
     force_std_fmt = TRUE,
 
-    location = NULL,
+    location = "PRSM",
     comments = NULL,
 
     INSI = weather_config$header$INSI,

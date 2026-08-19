@@ -82,7 +82,7 @@ cat("Weather pipeline finished\n")
 # -------------------------------------------
 
 soil_config <- generate_soil_config(
-  input$soil
+  input
 )
 
 write_soil_file(soil_config)

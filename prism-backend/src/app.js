@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import simulationRoutes from "./routes/simulation.routes.js";
 import energyRoutes from "./routes/energy.routes.js";
+import batchRoutes from "./routes/batch.routes.js";
 
 const app = express();
 
@@ -23,5 +24,6 @@ app.get("/health", (req, res) => {
 
 app.use("/api/simulation", simulationRoutes);
 app.use("/api/energy", energyRoutes);
+app.use("/api/batch", batchRoutes);
 
 export default app;

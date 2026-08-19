@@ -82,11 +82,18 @@ prism_generate_soil_profile <- function(soil){
 # ------------------------------------------------
 # Generate DSSAT .SOL (FINAL FIXED VERSION)
 # ------------------------------------------------
-generate_soil_config <- function(soil){
+generate_soil_config <- function(input){
 
-  layers <- prism_generate_soil_profile(soil)
+  layers <- prism_generate_soil_profile(input$soil)
 
   template <- DSSAT::read_sol(TEMPLATE_PATH)
+
+  template$PEDON[1]       <- "PRSM0001"
+  template$SITE[1]        <- "PRSM"
+  template$COUNTRY[1]     <- "IN"
+  template$LAT[1]         <- input$latitude
+  template$LONG[1]        <- input$longitude
+  template$DESCRIPTION[1] <- "PRISM Generated Soil"
 
   n <- length(layers$SLB)
 
@@ -112,7 +119,7 @@ generate_soil_config <- function(soil){
   return(template)
 }
 
-write_soil_file <- function(soil_config, file_name = "PRSM.SOL"){
+write_soil_file <- function(soil_config, file_name = "PR.SOL"){
 
   DSSAT::write_sol(
     sol = soil_config,

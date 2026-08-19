@@ -13,7 +13,7 @@ to_dssat_date <- function(date_str){
 # ------------------------------------------------
 # Generate FileX object from template
 # ------------------------------------------------
-generate_filex <- function(template_path, lat, lon, management){
+generate_filex <- function(template_path, lat, lon, management, batch_mode = FALSE){
 
   filex <- read_filex(template_path)
 
@@ -24,6 +24,11 @@ generate_filex <- function(template_path, lat, lon, management){
   filex$FIELDS$YCRD[1] <- as.numeric(lat)
 
   filex$FIELDS$WSTA[1] <- "PRSM"
+  filex$FIELDS$ID_SOIL[1] <- "PRSM0001"
+  filex$FIELDS$ID_FIELD[1] <- "PRSM0001"
+  if (batch_mode) {
+      return(filex)
+  }
 
 # ------------------------------------------------
 # Variety Selection

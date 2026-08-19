@@ -4,6 +4,7 @@ export async function buildSimulationInput(requestBody) {
 
   const latitude = requestBody.location.latitude;
   const longitude = requestBody.location.longitude;
+  const trtno = requestBody.trtno;
 
   const soil = await getNearestSoil(latitude, longitude);
 
@@ -14,7 +15,7 @@ export async function buildSimulationInput(requestBody) {
   const inputData = {
     latitude,
     longitude,
-
+    trtno,
     crop: requestBody.crop,
 
     soil: {

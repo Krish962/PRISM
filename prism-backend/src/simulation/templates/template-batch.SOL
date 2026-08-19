@@ -1,0 +1,13 @@
+*SOILS: General DSSAT Soil Input File
+
+*PRSM0001    -99         SL      90 Medium Sandy Loam
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ PRSM        IN            22.314   87.311 Haplustalf
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+     R   .14     6    .4    76     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+     5   -99  .052  .176   .36     1     3  1.61    .5  14.3  26.2  59.5   .05   6.3   -99   -99   -99
+    20   -99  .052  .176   .36     1  2.59  1.61    .4  14.3  26.2  59.5   .04   6.3   -99   -99   -99
+    40   -99  .073  .176   .36    .5   .43  1.61    .1    27  20.2  52.8   .01   6.5   -99   -99   -99
+    60   -99  .052  .176   .36    .5   .43  1.61    .1  28.6  19.2  52.2   .01   6.7   -99   -99   -99
+    90   -99  .052  .176   .36   .38   .43  1.61   .05    20    25    52   .01   6.5   -99   -99   -99
