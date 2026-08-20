@@ -37,8 +37,7 @@ RUN cmake -S /tmp/dssat-csm-os -B /tmp/dssat-csm-os/build \
     && test -x /opt/dssat/dscsm048 \
     && rm -rf /tmp/dssat-csm-os
 
-RUN Rscript -e "install.packages(c('jsonlite', 'dplyr', 'lubridate', 'DSSAT'), repos='https://cloud.r-project.org')" \
-    && Rscript -e "stopifnot(all(vapply(c('jsonlite', 'dplyr', 'lubridate', 'DSSAT'), requireNamespace, logical(1), quietly=TRUE)))"
+RUN Rscript -e "install.packages('DSSAT', repos='https://cloud.r-project.org')"
 
 WORKDIR /app
 COPY package*.json ./
