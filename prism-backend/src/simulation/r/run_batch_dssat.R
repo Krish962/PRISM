@@ -132,7 +132,7 @@ cat(readLines("DSSBatch.v48"), sep = "\n")
 
 cat("Batch file written: DSSBatch.v48\n")
 
-options(DSSAT.CSM = "C:/DSSAT48/DSCSM048.EXE")
+options(DSSAT.CSM = "C:/Users/asus/PRISM/prism-backend/src/simulation/DSSAT48/DSCSM048.EXE")
 
 result <- run_dssat(run_mode = "B")
 

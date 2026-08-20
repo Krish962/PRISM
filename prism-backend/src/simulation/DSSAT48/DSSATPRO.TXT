@@ -1,0 +1,405 @@
+*PROFILE: General DSSAT Profile
+
+@EXT D Commandline/Path
+!
+! File type : Barley          
+! File ext. : *.bax
+!
+MBA C: \DSSAT48 DSCSM048.EXE CSCER048
+BAD C: \DSSAT48\BARLEY
+!
+! File type : Maize           
+! File ext. : *.mzx
+!
+MMZ C: \DSSAT48 DSCSM048.EXE MZCER048
+MZD C: \DSSAT48\Maize
+!
+! File type : Pearl millet    
+! File ext. : *.mlx
+!
+MML C: \DSSAT48 DSCSM048.EXE MLCER048
+MLD C: \DSSAT48\PearlMillet
+!
+! File type : Quinoa          
+! File ext. : *.qux
+!
+MQU C: \DSSAT48 DSCSM048.EXE CRGRO048
+QUD C: \DSSAT48\Quinoa
+!
+! File type : Rice            
+! File ext. : *.rix
+!
+MRI C: \DSSAT48 DSCSM048.EXE RICER048
+RID C: \DSSAT48\Rice
+!
+! File type : Sorghum         
+! File ext. : *.sgx
+!
+MSG C: \DSSAT48 DSCSM048.EXE SGCER048
+SGD C: \DSSAT48\Sorghum
+!
+! File type : Wheat           
+! File ext. : *.whx
+!
+MWH C: \DSSAT48 DSCSM048.EXE CSCER048
+WHD C: \DSSAT48\Wheat
+!
+! File type : Chickpea        
+! File ext. : *.chx
+!
+MCH C: \DSSAT48 DSCSM048.EXE CRGRO048
+CHD C: \DSSAT48\CHICKPEA
+!
+! File type : Cowpea          
+! File ext. : *.cpx
+!
+MCP C: \DSSAT48 DSCSM048.EXE CRGRO048
+CPD C: \DSSAT48\COWPEA
+!
+! File type : Dry bean        
+! File ext. : *.bnx
+!
+MBN C: \DSSAT48 DSCSM048.EXE CRGRO048
+BND C: \DSSAT48\DRYBEAN
+!
+! File type : Faba bean       
+! File ext. : *.fbx
+!
+MFB C: \DSSAT48 DSCSM048.EXE CRGRO048
+FBD C: \DSSAT48\FABABEAN
+!
+! File type : Lentil          
+! File ext. : *.ltx
+!
+MLT C: \DSSAT48 DSCSM048.EXE CRGRO048
+LTD C: \DSSAT48\Lentil
+!
+! File type : Pea             
+! File ext. : *.pex
+!
+MPE C: \DSSAT48 DSCSM048.EXE CRGRO048
+PED C: \DSSAT48\PEA
+!
+! File type : Peanut          
+! File ext. : *.pnx
+!
+MPN C: \DSSAT48 DSCSM048.EXE CRGRO048
+PND C: \DSSAT48\Peanut
+!
+! File type : Pigeon pea      
+! File ext. : *.ppx
+!
+MPP C: \DSSAT48 DSCSM048.EXE CRGRO048
+PPD C: \DSSAT48\PIGEONPEA
+!
+! File type : Soybean         
+! File ext. : *.sbx
+!
+MSB C: \DSSAT48 DSCSM048.EXE CRGRO048
+SBD C: \DSSAT48\Soybean
+!
+! File type : Velvet bean     
+! File ext. : *.vbx
+!
+MVB C: \DSSAT48 DSCSM048.EXE CRGRO048
+VBD C: \DSSAT48\VELVETBEAN
+!
+! File type : Cassava         
+! File ext. : *.csx
+!
+MCS C: \DSSAT48 DSCSM048.EXE CSYCA048
+CSD C: \DSSAT48\CASSAVA
+!
+! File type : Potato          
+! File ext. : *.ptx
+!
+MPT C: \DSSAT48 DSCSM048.EXE PTSUB048
+PTD C: \DSSAT48\POTATO
+!
+! File type : Sugar beet      
+! File ext. : *.bsx
+!
+MBS C: \DSSAT48 DSCSM048.EXE BSCER048
+BSD C: \DSSAT48\SUGARBEET
+!
+! File type : Tannier         
+! File ext. : *.tnx
+!
+MTN C: \DSSAT48 DSCSM048.EXE TNARO048
+TND C: \DSSAT48\Tanier
+!
+! File type : Taro            
+! File ext. : *.trx
+!
+MTR C: \DSSAT48 DSCSM048.EXE TRARO048
+TRD C: \DSSAT48\TARO
+!
+! File type : Canola          
+! File ext. : *.cnx
+!
+MCN C: \DSSAT48 DSCSM048.EXE CRGRO048
+CND C: \DSSAT48\CANOLA
+!
+! File type : Safflower       
+! File ext. : *.sfx
+!
+MSF C: \DSSAT48 DSCSM048.EXE CRGRO048
+SFD C: \DSSAT48\SAFFLOWER
+!
+! File type : Sunflower       
+! File ext. : *.sux
+!
+MSU C: \DSSAT48 DSCSM048.EXE CRGRO048
+SUD C: \DSSAT48\SUNFLOWER
+!
+! File type : Sesame          
+! File ext. : *.ssx
+!
+MSS C: \DSSAT48 DSCSM048.EXE CRGRO048
+SSD C: \DSSAT48\Sesame
+!
+! File type : Bell pepper     
+! File ext. : *.prx
+!
+MPR C: \DSSAT48 DSCSM048.EXE CRGRO048
+PRD C: \DSSAT48\BellPepper
+!
+! File type : Cabbage         
+! File ext. : *.cbx
+!
+MCB C: \DSSAT48 DSCSM048.EXE CRGRO048
+CBD C: \DSSAT48\CABBAGE
+!
+! File type : Tomato          
+! File ext. : *.tmx
+!
+MTM C: \DSSAT48 DSCSM048.EXE CRGRO048
+TMD C: \DSSAT48\TOMATO
+!
+! File type : Sweet corn      
+! File ext. : *.swx
+!
+MSW C: \DSSAT48 DSCSM048.EXE SWCER048
+SWD C: \DSSAT48\SweetCorn
+!
+! File type : Green bean      
+! File ext. : *.gbx
+!
+MGB C: \DSSAT48 DSCSM048.EXE CRGRO048
+GBD C: \DSSAT48\GREENBEAN
+!
+! File type : Cotton          
+! File ext. : *.cox
+!
+MCO C: \DSSAT48 DSCSM048.EXE CRGRO048
+COD C: \DSSAT48\cotton
+!
+! File type : Alfalfa         
+! File ext. : *.alx
+!
+MAL C: \DSSAT48 DSCSM048.EXE PRFRM048
+ALD C: \DSSAT48\ALFALFA
+!
+! File type : Bahia grass     
+! File ext. : *.bhx
+!
+MBH C: \DSSAT48 DSCSM048.EXE PRFRM048
+BHD C: \DSSAT48\BAHIA
+!
+! File type : Bermudagrass    
+! File ext. : *.bmx
+!
+MBM C: \DSSAT48 DSCSM048.EXE PRFRM048
+BMD C: \DSSAT48\Bermudagrass
+!
+! File type : Brachiaria      
+! File ext. : *.brx
+!
+MBR C: \DSSAT48 DSCSM048.EXE PRFRM048
+BRD C: \DSSAT48\BRACHIARIA
+!
+! File type : Clover          
+! File ext. : *.cvx
+!
+MCV  \ 
+CVD  \
+!
+! File type : Grass weeds     
+! File ext. : *.gwx
+!
+MGW  \ 
+GWD  \
+!
+! File type : Perennial peanut
+! File ext. : *.pox
+!
+MPO C: \DSSAT48 DSCSM048.EXE PRFRM048
+POD C: \DSSAT48\PERENNIALPEANUT
+!
+! File type : Rhizoma Peanut  
+! File ext. : *.rpx
+!
+MRP  \ 
+RPD  \
+!
+! File type : Napier grass    
+! File ext. : *.npx
+!
+MNP C: \DSSAT48 DSCSM048.EXE CRGRO048
+NPD C: \DSSAT48\Napier
+!
+! File type : Sugarcane       
+! File ext. : *.scx
+!
+MSC C: \DSSAT48 DSCSM048.EXE SCCAN048
+SCD C: \DSSAT48\SUGARCANE
+!
+! File type : Switch grass    
+! File ext. : *.six
+!
+MSI C: \DSSAT48
+SID C: \DSSAT48
+!
+! File type : Citrus          
+! File ext. : *.ctx
+!
+MCT  \ 
+CTD  \
+!
+! File type : Banana          
+! File ext. : *.nnx
+!
+MNN  \ 
+NND  \
+!
+! File type : Pineapple       
+! File ext. : *.pix
+!
+MPI C: \DSSAT48 DSCSM048.EXE PIALO048
+PID C: \DSSAT48\PINEAPPLE
+!
+! File type : Crop 1          
+! File ext. : *.u1x
+!
+MU1 C: \DSSAT48
+U1D C: \DSSAT48\CROP1
+!
+! File type : Crop 2          
+! File ext. : *.u2x
+!
+MU2 C: \DSSAT48
+U2D C: \DSSAT48\CROP2
+!
+! File type : Fallow          
+! File ext. : *.fax
+!
+MFA C: \DSSAT48 DSCSM048.EXE CRGRO048
+FAD C: \DSSAT48\FALLOW
+!
+! File type : Seasonal
+! File ext. : *.snx
+!
+ASS C: \DSSAT48 DSCSM048.EXE
+ASD C: \DSSAT48\Seasonal
+!
+! File type : Sequence
+! File ext. : *.sqx
+!
+AQS C: \DSSAT48 DSCSM048.EXE
+AQD C: \DSSAT48\Sequence
+!
+! File type : Spatial
+! File ext. : *.gsx
+!
+APS C: \DSSAT48 DSCSM048.EXE
+APD C: \DSSAT48\Spatial
+!
+! File type : Soil            
+! File ext. : *.sol
+!
+DPT C: \DSSAT48
+SLD C: \DSSAT48\SOIL
+!
+! File type : Daily           
+! File ext. : *.wth
+!
+DWC C: \DSSAT48
+WED C: \DSSAT48\Weather
+!
+! File type : Climate         
+! File ext. : *.cli
+!
+DWC C: \DSSAT48
+CLD C: \DSSAT48\WEATHER\CLIMATE
+!
+! File type : Generated       
+! File ext. : *.wtg
+!
+DWC C: \DSSAT48
+WGD C: \DSSAT48\WEATHER\GEN
+!
+! File type : Monthly         
+! File ext. : *.mth
+!
+DWC C: \DSSAT48
+WMD C: \DSSAT48\WEATHER\MONTH
+!
+! File type : Price           
+! File ext. : *.pri
+!
+DDG C: \DSSAT48
+ECD C: \DSSAT48\ECONOMIC
+!
+! File type : Price           
+! File ext. : *.prq
+!
+DDG C: \DSSAT48
+ECD C: \DSSAT48\ECONOMIC
+!
+! File type : Pests           
+! File ext. : *.pst
+!
+DPM C: \DSSAT48
+PSD C: \DSSAT48\PEST
+!
+! File type : Cultivar        
+! File ext. : *.cul
+!
+DCG C: \DSSAT48\TOOLS\GENCALC GENCALC2.EXE
+CRD C: \DSSAT48\GENOTYPE
+!
+! File type : Ecotype         
+! File ext. : *.eco
+!
+DCG C: \DSSAT48\TOOLS\GENCALC GENCALC2.EXE
+CRD C: \DSSAT48\GENOTYPE
+!
+! File type : Species         
+! File ext. : *.spe
+!
+DCG C: \DSSAT48\TOOLS\GENCALC GENCALC2.EXE
+CRD C: \DSSAT48\GENOTYPE
+!
+! File type : Standard Data   
+! File ext. : *.*da
+!
+DPT C: \DSSAT48
+STD C: \DSSAT48\StandardData
+!
+! File type : Climate Change
+! File ext. : *.snx
+!
+ACC C: \DSSAT48 DSCSM048.EXE
+CCD C: \DSSAT48\ClimateChange
+!
+! File type : Yield Forecast
+! File ext. : *.fcx
+!
+AYF C: \DSSAT48 DSCSM048.EXE
+YFD C: \DSSAT48\YieldForecast
+!
+! File type : Output          
+! File ext. : *.out
+!
+DIS  \
+     \

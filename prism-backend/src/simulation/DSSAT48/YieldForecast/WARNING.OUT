@@ -1,0 +1,22 @@
+*WARNING DETAIL FILE
+
+******************************************************************************
+
+*DSSAT Cropping System Model Ver. 4.8.5.000 -release  MAR 09, 2026 22:47:35
+
+*RUN   1        : WH forecast Jun 1, 2020            CAPE2002    1
+
+ EXPERIMENT     : CAPE2002 FC 2020 YIELD FORECAST - USING FORECAST RUNMODE
+ DATA PATH      : C:\DSSAT48\YieldForecast\
+ TREATMENT  1   : WH forecast Jun 1, 2020
+  
+
+ IPEXP   YEAR DOY =    0   0
+ Photosynthesis method (PHOTO in FILEX) has been changed                       
+ from "L" to "C" for compatibility with crop model, CSCER.                     
+
+ IPWTH   YEAR DOY = 2020   1
+ Warning: SRAD < 1 MJ.m-2.d-1.                                                 
+ C:\DSSAT48\Weather\CAPE8437.WTH                                               
+ Line    13156                                                                 
+ SRAD =   0.70 MJ.m-2.d-1                                                      

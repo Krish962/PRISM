@@ -1,0 +1,94 @@
+*EXP.DETAILS: CAPE2002FC 2020 YIELD FORECAST - USING FORECAST RUNMODE                
+
+*FILES
+@N  EXP.DATA    AFILE        ADIR
+  3 EXP         CAPE2002.FCA C:\DSSAT48\YieldForecast\                                                       
+@N  SPECIES     SPFILE       SPDIR
+  3 SPE         WHCER048.SPE C:\DSSAT48\GENOTYPE\                                                            
+@N  ECOTYPE     EFILE        EDIR
+  3 ECO         WHCER048.ECO C:\DSSAT48\GENOTYPE\                                                            
+@N  CULTIVAR    CFILE        CDIR
+  3 CUL         WHCER048.CUL C:\DSSAT48\GENOTYPE\                                                            
+@N  SOIL        SFILE        SDIR
+  3 SOIL        KZ.SOL       C:\DSSAT48\SOIL\                                                                
+@N  WEATHER     WFILE        WDIR
+  3 WEATH       CAPE8437.WTH C:\DSSAT48\Weather\                                                             
+
+*SIMULATION CONTROL
+@N  GENERAL     NYERS NREPS START   SDATE RSEED SNAME.................... MODEL...
+  3 GE             36     1     S 2020001  2150 August 1 Forecast         CSCER048
+@N  OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+  3 OP              Y     Y     N     N     N     N     N     N     M
+@N  METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT SOMDY MESEV MESOL METMP MEGHG
+  3 ME              M     M     E     R     S     C     R     1     P     R     2     D     0
+@N  MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+  3 MA              A     A     R     R     M
+@N  OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT  LONG CHOUT OPOUT
+  3 OU              Y     N     Y     1     N     N     N     N     N     N     0     N     N
+
+!AUTOMATIC MANAGEM
+@N  PLANTING      PFRST   PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+  3 PL          2020135 2020154   40.  100.   30.   40.   10.
+@N  IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+  3 IR            30.   50.  100. GS000 IR001  10.0 1.000
+@N  NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+  3 NI            30.   50.   25. FE001 GS000
+@N  RESIDUES    RIPCN RTIME RIDEP
+  3 RE           100.     1   20.
+@N  HARVEST     HFRST   HLAST HPCNP HRCNR
+  3 HA          20001     -99  100.    0.
+
+*TREATMENTS
+@N   R O C TNAME....................  CU  FL  SA  IC  MP  MI  MF  MR  MC  MT  ME  MH  SM
+  3  1 1 0 WH forecast Aug 1, 2020     1   1   0   1   1   0   0   0   0   0   0   0   3
+
+*CULTIVARS
+@C  CR INGENO CNAME...   ECO#   P1V   P1D    P5    G1    G2    G3 PHINT
+  1 WH KZ0001 North KA DFAULT  10.0 120.0 670.0  16.0  42.0  2.00  90.0
+
+*FIELDS
+@L  ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX   SLDP ID_SOIL    PMALB  PMWD
+  1 CAPE0001 CAPE8437   0.0  -99.   -99  -99.  100.   -99 Loam   -99. KZ01826030-99.00 -99.0
+@L             XCRD            YCRD      ELEV              AREA  SLEN  FLWR  SLAS PRMGT
+  1       -99.00000       -99.00000    -99.00               1.0  100.   1.0 -99.0 FH201    50
+
+*INITIAL CONDITIONS
+@C  PCR     ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID
+  1 WH    2020001   500     0  0.00  0.00 -99.0  2000  0.60  0.00  100.    0.
+@C   ICBL  SH2O  SNH4  SNO3
+  1    5. 0.186   0.3   3.0
+  1   15. 0.197   0.3   3.0
+  1   30. 0.211   0.3   3.0
+  1   45. 0.225   0.3   3.0
+  1   60. 0.225   0.3   3.0
+  1   80. 0.224   0.3   3.0
+  1  100. 0.224   0.3   3.0
+  1  150. 0.213   0.3   3.0
+  1  200. 0.213   0.3   3.0
+
+*PLANTING DETAILS
+@P    PDATE   EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL
+  1 2020135     -99 200.0 200.0     S     R   16.    0.   4.0  -99.  -99. -99.0 -99.0 -99.0
+
+*IRRIGATION
+@I   IEFF  IDEP  ITHR  IEPT  IOFF  IAME  IAMT
+  0 1.000    0.    0.    0. GS000 IR001   0.0
+@I    IDATE  IROP IRVAL
+
+*FERTILIZERS
+@F    FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD
+
+*RESIDUES
+@R    RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET
+
+*CHEMICALS
+@C    CDATE CHCOD CHAMT  CHME CHDEP   CHT
+
+*TILLAGE
+@T    TDATE TIMPL  TDEP
+
+*ENVIRONMENT
+@E    ODATE  EDAY  ERAD  EMAX  EMIN ERAIN  ECO2  EDEW EWIND
+
+*HARVEST
+@H    HDATE  HSTG  HCOM HSIZE   HPC  HBPC
