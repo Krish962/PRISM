@@ -21,7 +21,6 @@ script_dir <- dirname(normalizePath(script_path))
 # Load helper scripts
 # -------------------------------------------
 
-source(file.path(script_dir, "weather_generator.R"))
 source(file.path(script_dir, "soil_generator.R"))
 source(file.path(script_dir, "filex_generator.R"))
 # -------------------------------------------
@@ -55,24 +54,17 @@ input <- fromJSON(input_file)
 lat <- input$latitude
 lon <- input$longitude
 
-cat("DEBUG lat:", lat, "lon:", lon, "\n")
 # -------------------------------------------
 # .WTH file creation
 # -------------------------------------------
 
-start_year <- 2026
-end_year   <- 2026
-
-weather_config <- generate_weather_config(
-lat,
-lon,
-start_year,
-end_year
+file.copy(
+  normalizePath(file.path(script_dir, "..", "templates", "template-batch.WTH")),
+  "PRSM.WTH",
+  overwrite = TRUE
 )
 
-write_weather_file(weather_config)
-
-cat("Weather pipeline finished\n")
+cat("Weather template copied\n")
 
 # -------------------------------------------
 # .SOL file creation
