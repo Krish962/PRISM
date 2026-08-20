@@ -79,7 +79,7 @@ cat("Weather pipeline finished\n")
 # -------------------------------------------
 
 file.copy(
-  "C:/Users/asus/PRISM/prism-backend/src/simulation/templates/template-batch.SOL",
+  normalizePath(file.path(script_dir, "..", "templates", "template-batch.SOL")),
   "PR.SOL",
   overwrite = TRUE
 )
@@ -93,7 +93,7 @@ cat("Soil pipeline finished\n")
 input <- jsonlite::fromJSON(input_file)
 management <- input$management
 
-template_path <- "C:/Users/asus/PRISM/prism-backend/src/simulation/templates/template-batch.RIX"
+template_path <- normalizePath(file.path(script_dir, "..", "templates", "template-batch.RIX"))
 
 filex <- generate_filex(
 template_path,
@@ -111,6 +111,8 @@ cat("FileX pipeline finished\n")
 # -------------------------------------------
 # Batch creation and simulation run
 # -------------------------------------------
+
+options(DSSAT.CSM = normalizePath(file.path(script_dir, "..", "DSSAT48", "DSCSM048.EXE")))
 
 trtno <- input$trtno
 if (is.null(trtno) || length(trtno) == 0) {
@@ -131,8 +133,6 @@ write_dssbatch(
 cat(readLines("DSSBatch.v48"), sep = "\n")
 
 cat("Batch file written: DSSBatch.v48\n")
-
-options(DSSAT.CSM = "C:/Users/asus/PRISM/prism-backend/src/simulation/DSSAT48/DSCSM048.EXE")
 
 result <- run_dssat(run_mode = "B")
 

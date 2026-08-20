@@ -1,6 +1,8 @@
 suppressPackageStartupMessages(library(DSSAT))
 
-dssat_path <- "C:/DSSAT48"
+args_full <- commandArgs(trailingOnly = FALSE)
+script_path <- sub("--file=", "", args_full[grep("--file=", args_full)])
+dssat_path <- dirname(normalizePath(script_path))
 
 # inspect experiment file
 filex <- read_filex(file.path(dssat_path, "Rice", "IRMZ8601.RIX"))

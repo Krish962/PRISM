@@ -2,7 +2,9 @@ suppressPackageStartupMessages({
   library(DSSAT)
 })
 
-TEMPLATE_PATH <- "C:/Users/asus/PRISM/prism-backend/src/simulation/templates/template.SOL"
+args_full <- commandArgs(trailingOnly = FALSE)
+script_path <- sub("--file=", "", args_full[grep("--file=", args_full)])
+TEMPLATE_PATH <- normalizePath(file.path(dirname(script_path), "template.SOL"))
 
 cat("\n==================== LOAD TEMPLATE ====================\n")
 

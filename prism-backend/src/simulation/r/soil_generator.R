@@ -3,7 +3,7 @@ suppressPackageStartupMessages({
   library(DSSAT)
 })
 
-TEMPLATE_PATH <- "C:/Users/asus/PRISM/prism-backend/src/simulation/templates/template.SOL"
+TEMPLATE_PATH <- normalizePath(file.path(script_dir, "..", "templates", "template.SOL"))
 
 # ------------------------------------------------
 # Generate soil profile from DB input (Pedotransfer)
