@@ -60,27 +60,19 @@ cat("DEBUG lat:", lat, "lon:", lon, "\n")
 # .WTH file creation
 # -------------------------------------------
 
-#start_year <- "2025"
-#end_year   <- "2026"
-#
-#weather_config <- generate_weather_config(
-#lat,
-#lon,
-#start_year,
-#end_year
-#)
-#
-#write_weather_file(weather_config)
-#
-#cat("Weather pipeline finished\n")
+start_year <- 2026
+end_year   <- 2026
 
-file.copy(
-  "C:/Users/asus/PRISM/prism-backend/src/simulation/templates/template-batch.WTH",
-  "PRSM.WTH",
-  overwrite = TRUE
+weather_config <- generate_weather_config(
+lat,
+lon,
+start_year,
+end_year
 )
 
-cat("Copied template-batch.WTH to PRSM.WTH\n")
+write_weather_file(weather_config)
+
+cat("Weather pipeline finished\n")
 
 # -------------------------------------------
 # .SOL file creation

@@ -13,26 +13,13 @@ generate_weather_config <- function(lat, lon, start_year, end_year, elevation = 
   lat <- as.numeric(lat)
   lon <- as.numeric(lon)
 
-  # --------------------------------------------------
-  # NASA POWER currently has data only up to 2025.
-  # If future years are requested, download only 2025
-  # and later duplicate it.
-  # --------------------------------------------------
+  # NASA POWER currently has data only up to 2025. For requests that extend
+  # beyond that year, use the 2005-2025 daily climatology for all requested
+  # dates instead of duplicating a single year.
+  use_climatology <- end_year > 2025
 
-  duplicate_future <- FALSE
-
-  download_start_year <- start_year
-  download_end_year   <- end_year
-
-  if (start_year > 2025) {
-    download_start_year <- 2025
-    duplicate_future <- TRUE
-  }
-
-  if (end_year > 2025) {
-    download_end_year <- 2025
-    duplicate_future <- TRUE
-  }
+  download_start_year <- if (use_climatology) 2005 else start_year
+  download_end_year   <- if (use_climatology) 2025 else end_year
 
   weather <- get_weather_data(
     lon = lon,
@@ -46,34 +33,40 @@ generate_weather_config <- function(lat, lon, start_year, end_year, elevation = 
 
   daily <- weather$WEATHER_DAILY
 
-  # --------------------------------------------------
-  # If future weather was requested, duplicate the
-  # downloaded year(s) by shifting one year forward.
-  # --------------------------------------------------
+  if (use_climatology) {
+    weather_average <- daily %>%
+      transmute(
+        MONTH_DAY = format(as.Date(YYYYMMDD), "%m-%d"),
+        SRAD = ALLSKY_SFC_SW_DWN,
+        TMAX = T2M_MAX,
+        TMIN = T2M_MIN,
+        RAIN = PRECTOTCORR
+      ) %>%
+      group_by(MONTH_DAY) %>%
+      summarise(
+        across(c(SRAD, TMAX, TMIN, RAIN), ~ mean(.x, na.rm = TRUE)),
+        .groups = "drop"
+      )
 
-  if (duplicate_future) {
-
-    daily_future <- daily
-
-    daily_future$YYYYMMDD <-
-      lubridate::ymd(daily_future$YYYYMMDD) + years(1)
-
-    daily <- bind_rows(
-      daily,
-      daily_future
-    ) %>%
-      arrange(YYYYMMDD)
+    weather_df <- tibble(DATE = seq(
+      as.Date(paste0(start_year, "-01-01")),
+      as.Date(paste0(end_year, "-12-31")),
+      by = "day"
+    )) %>%
+      mutate(MONTH_DAY = format(DATE, "%m-%d")) %>%
+      left_join(weather_average, by = "MONTH_DAY") %>%
+      select(-MONTH_DAY)
+  } else {
+    weather_df <- daily %>%
+      transmute(
+        DATE = as.Date(YYYYMMDD),
+        SRAD = ALLSKY_SFC_SW_DWN,
+        TMAX = T2M_MAX,
+        TMIN = T2M_MIN,
+        RAIN = PRECTOTCORR
+      ) %>%
+      arrange(DATE)
   }
-
-  weather_df <- daily %>%
-    transmute(
-      DATE = as.Date(YYYYMMDD),
-      SRAD = ALLSKY_SFC_SW_DWN,
-      TMAX = T2M_MAX,
-      TMIN = T2M_MIN,
-      RAIN = PRECTOTCORR
-    ) %>%
-    arrange(DATE)
 
   tav <- calc_TAV(weather_df)
   amp <- calc_AMP(weather_df)
