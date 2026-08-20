@@ -114,7 +114,16 @@ cat("FileX pipeline finished\n")
 # Batch creation and simulation run
 # -------------------------------------------
 
-options(DSSAT.CSM = normalizePath(file.path(script_dir, "..", "DSSAT48", "DSCSM048.EXE")))
+dssat_root <- Sys.getenv(
+  "DSSAT_ROOT",
+  unset = normalizePath(file.path(script_dir, "..", "DSSAT48"))
+)
+dssat_executable <- Sys.getenv(
+  "DSSAT_EXECUTABLE",
+  unset = file.path(dssat_root, "DSCSM048.EXE")
+)
+
+options(DSSAT.CSM = normalizePath(dssat_executable))
 
 write_dssbatch(
 x = "PRISM.X",

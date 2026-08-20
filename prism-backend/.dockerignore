@@ -1,0 +1,9 @@
+node_modules
+.env
+npm-debug.log*
+src/simulation/DSSAT48
+src/simulation/dssat-csm-os/.git
+src/simulation/dssat-csm-os/build
+*.Rhistory
+*.OUT
+*.LOG
