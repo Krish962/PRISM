@@ -27,6 +27,8 @@ export async function runBatchSimulationService(inputData) {
   fs.writeFileSync(inputPath, JSON.stringify(inputData, null, 2));
 
   return new Promise((resolve, reject) => {
+    let stderrOutput = "";
+    let settled = false;
 
     const rProcess = spawn("Rscript", [
       runnerPath,
@@ -39,28 +41,45 @@ export async function runBatchSimulationService(inputData) {
     });
 
     rProcess.stderr.on("data", data => {
+      stderrOutput += data.toString();
       console.error(data.toString());
     });
 
-    rProcess.on("close", () => {
+    rProcess.on("error", error => {
+      settled = true;
+      fs.rmSync(simDir, { recursive: true, force: true });
+      reject(new Error(`Unable to start Rscript: ${error.message}`));
+    });
 
-  try {
+    rProcess.on("close", (code, signal) => {
+      if (settled) {
+        return;
+      }
 
-    if (!fs.existsSync(outputPath)) {
-      throw new Error("Simulation failed: output.json not produced")
-    }
+      try {
+        if (code !== 0) {
+          const details = stderrOutput.trim();
+          throw new Error(
+            `Batch simulation process exited with code ${code || "unknown"}` +
+            `${signal ? ` (signal ${signal})` : ""}` +
+            `${details ? `: ${details}` : ""}`
+          );
+        }
 
+        if (!fs.existsSync(outputPath)) {
+          throw new Error("Simulation failed: output.json not produced");
+        }
 
-      const result = JSON.parse(
-        fs.readFileSync(outputPath)
-      );
+        const result = JSON.parse(fs.readFileSync(outputPath));
+        settled = true;
         resolve(result);
       } catch (err) {
+        settled = true;
         reject(err);
       } finally {
         console.log("Simulation finished:", simId);
         console.log("Cleaning simulation folder:", simDir);
-        //fs.rmSync(simDir, { recursive: true, force: true });
+        fs.rmSync(simDir, { recursive: true, force: true });
       }
 
     });
