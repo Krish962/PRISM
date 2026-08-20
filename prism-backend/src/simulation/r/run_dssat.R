@@ -114,16 +114,29 @@ cat("FileX pipeline finished\n")
 # Batch creation and simulation run
 # -------------------------------------------
 
-dssat_root <- Sys.getenv(
-  "DSSAT_ROOT",
-  unset = normalizePath(file.path(script_dir, "..", "DSSAT48"))
-)
-dssat_executable <- Sys.getenv(
-  "DSSAT_EXECUTABLE",
-  unset = file.path(dssat_root, "DSCSM048.EXE")
-)
+dssat_root <- Sys.getenv("DSSAT_ROOT", unset = "")
+if (!nzchar(dssat_root)) {
+  dssat_root <- if (dir.exists("/opt/dssat")) {
+    "/opt/dssat"
+  } else {
+    normalizePath(file.path(script_dir, "..", "DSSAT48"))
+  }
+}
 
-options(DSSAT.CSM = normalizePath(dssat_executable))
+dssat_executable <- Sys.getenv("DSSAT_EXECUTABLE", unset = "")
+if (!nzchar(dssat_executable)) {
+  dssat_executable <- if (file.exists(file.path(dssat_root, "dscsm048"))) {
+    file.path(dssat_root, "dscsm048")
+  } else {
+    file.path(dssat_root, "DSCSM048.EXE")
+  }
+}
+
+if (!file.exists(dssat_executable)) {
+  stop("DSSAT executable not found: ", dssat_executable)
+}
+
+options(DSSAT.CSM = normalizePath(dssat_executable, mustWork = TRUE))
 
 write_dssbatch(
 x = "PRISM.X",
@@ -131,10 +144,11 @@ trtno = 1,
 rp = 1,
 sq = 0,
 op = 0,
-co = 0
+co = 0,
+file_name = "DSSBatch.V48"
 )
 
-cat("Batch file written: DSSBatch.v48\n")
+cat("Batch file written: DSSBatch.V48\n")
 
 run_dssat(run_mode = "B")
 
