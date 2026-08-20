@@ -14,6 +14,7 @@ async function init() {
     const db = client.db(env.MONGO_DB_NAME);
 
     soilCollection = db.collection("soils");
+    await soilCollection.createIndex({ location: "2dsphere" });
   }
 }
 
