@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
+import { env } from "../config/env.config.js";
 
-const uri = "mongodb://localhost:27017";
-const client = new MongoClient(uri);
+const client = new MongoClient(env.MONGO_URI);
 
 let soilCollection = null;
 
@@ -11,7 +11,7 @@ async function init() {
 
     await client.connect();
 
-    const db = client.db("prism");
+    const db = client.db(env.MONGO_DB_NAME);
 
     soilCollection = db.collection("soils");
   }
