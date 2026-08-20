@@ -1,11 +1,19 @@
 import axios from "axios";
 
+const configuredApiUrl = import.meta.env.VITE_API_URL;
+
+if (!configuredApiUrl && import.meta.env.PROD) {
+  throw new Error("VITE_API_URL must be configured for production builds");
+}
+
+const apiBaseUrl = configuredApiUrl || "http://localhost:5000";
+
 const simulationAPI = axios.create({
-  baseURL: "http://localhost:5000/api/simulation"
+  baseURL: `${apiBaseUrl}/api/simulation`
 });
 
 const batchAPI = axios.create({
-  baseURL: "http://localhost:5000/api/batch"
+  baseURL: `${apiBaseUrl}/api/batch`
 });
 
 export const runSimulation = async (payload) => {
