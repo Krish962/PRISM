@@ -1,9 +1,56 @@
 suppressPackageStartupMessages({
   library(dplyr)
   library(lubridate)
-  library(csmTools)
   library(DSSAT)
 })
+
+fetch_power_weather <- function(lon, lat, from, to, pars, res, src, output_path = NULL){
+
+  start_date <- format(as.Date(from), "%Y%m%d")
+  end_date <- format(as.Date(to), "%Y%m%d")
+  start_year <- as.integer(format(as.Date(from), "%Y"))
+  end_year <- as.integer(format(as.Date(to), "%Y"))
+
+  api_url <- paste0(
+    "https://power.larc.nasa.gov/api/temporal/daily/point",
+    "?parameters=T2M,T2M_MAX,T2M_MIN,PRECTOTCORR,ALLSKY_SFC_SW_DWN",
+    "&community=AG",
+    "&longitude=", lon,
+    "&latitude=", lat,
+    "&start=", start_date,
+    "&end=", end_date,
+    "&format=JSON"
+  )
+
+  response <- jsonlite::fromJSON(api_url)
+  parameters <- response$properties$parameter
+  date_keys <- names(parameters$T2M_MAX)
+  dates <- as.Date(date_keys, format = "%Y%m%d")
+
+  clean_values <- function(values){
+    values <- as.numeric(unname(values[date_keys]))
+    values[values <= -900] <- NA_real_
+    values
+  }
+
+  weather_data <- data.frame(
+    LON = rep(lon, length(dates)),
+    LAT = rep(lat, length(dates)),
+    YEAR = as.integer(format(dates, "%Y")),
+    MM = as.integer(format(dates, "%m")),
+    DD = as.integer(format(dates, "%d")),
+    DOY = as.integer(format(dates, "%j")),
+    YYYYMMDD = dates,
+    T2M = clean_values(parameters$T2M),
+    T2M_MAX = clean_values(parameters$T2M_MAX),
+    T2M_MIN = clean_values(parameters$T2M_MIN),
+    PRECTOTCORR = clean_values(parameters$PRECTOTCORR),
+    ALLSKY_SFC_SW_DWN = clean_values(parameters$ALLSKY_SFC_SW_DWN)
+  )
+
+  weather_data$YYYYMMDD <- dates
+  list(WEATHER_DAILY = weather_data)
+}
 
 generate_weather_config <- function(lat, lon, start_year, end_year, elevation = 50){
 
@@ -21,7 +68,7 @@ generate_weather_config <- function(lat, lon, start_year, end_year, elevation = 
   download_start_year <- if (use_climatology) 2005 else start_year
   download_end_year   <- if (use_climatology) 2025 else end_year
 
-  weather <- get_weather_data(
+  weather <- fetch_power_weather(
     lon = lon,
     lat = lat,
     pars = c("air_temperature","precipitation","solar_radiation"),

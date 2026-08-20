@@ -37,11 +37,7 @@ RUN cmake -S /tmp/dssat-csm-os -B /tmp/dssat-csm-os/build \
     && test -x /opt/dssat/dscsm048 \
     && rm -rf /tmp/dssat-csm-os
 
-RUN Rscript -e "install.packages('remotes', repos='https://cloud.r-project.org')" \
-    && Rscript -e "install.packages('DSSAT', repos='https://cloud.r-project.org')"
-
-RUN Rscript -e "remotes::install_github('leroy-bml/csmTools', dependencies=TRUE, upgrade='never', repos='https://cloud.r-project.org')" \
-    && Rscript -e "stopifnot(requireNamespace('csmTools', quietly=TRUE)); packageVersion('csmTools')"
+RUN Rscript -e "install.packages('DSSAT', repos='https://cloud.r-project.org')"
 
 WORKDIR /app
 COPY package*.json ./
