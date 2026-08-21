@@ -55,7 +55,6 @@ input <- fromJSON(input_file)
 lat <- input$latitude
 lon <- input$longitude
 
-cat("DEBUG lat:", lat, "lon:", lon, "\n")
 # -------------------------------------------
 # .WTH file creation
 # -------------------------------------------

@@ -164,7 +164,6 @@ write_dssbatch(
   file_name = "DSSBatch.V48"
 )
 
-cat(readLines("DSSBatch.V48"), sep = "\n")
 
 cat("Batch file written: DSSBatch.V48\n")
 
@@ -176,8 +175,6 @@ print(result)
 # Extract and Format Results
 # -------------------------------------------
 pg <- read_output("PlantGro.OUT")
-
-print(names(pg))
 
 # Get all unique runs
 runs <- unique(pg$RUN)
