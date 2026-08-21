@@ -144,20 +144,28 @@ generate_weather_config <- function(lat, lon, start_year, end_year, elevation = 
   return(weather_config)
 }
 
-write_weather_file <- function(weather_config, file_name="PRSM.WTH"){
+write_weather_file <- function(
+  weather_config,
+  file_name="PRSM.WTH",
+  template_path=WEATHER_TEMPLATE_PATH
+){
 
-  weather <- read_wth(WEATHER_TEMPLATE_PATH)
+  weather <- read_wth(template_path)
   weather_data <- weather_config$data
 
-  template_dates <- as.POSIXct(
-    as.Date(
-      paste0(
-        2000 + weather_data$DATE %/% 1000,
-        "-01-01"
-      )
-    ) + weather_data$DATE %% 1000 - 1,
-    tz = "UTC"
-  )
+  if (inherits(weather_data$DATE, "POSIXt")) {
+    template_dates <- as.POSIXct(weather_data$DATE, tz = "UTC")
+  } else {
+    template_dates <- as.POSIXct(
+      as.Date(
+        paste0(
+          2000 + weather_data$DATE %/% 1000,
+          "-01-01"
+        )
+      ) + weather_data$DATE %% 1000 - 1,
+      tz = "UTC"
+    )
+  }
 
   weather <- weather[rep(1, nrow(weather_data)), , drop = FALSE]
   weather$DATE <- template_dates

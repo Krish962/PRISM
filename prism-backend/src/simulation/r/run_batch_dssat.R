@@ -23,6 +23,7 @@ script_dir <- dirname(normalizePath(script_path))
 
 source(file.path(script_dir, "soil_generator.R"))
 source(file.path(script_dir, "filex_generator.R"))
+source(file.path(script_dir, "weather_generator.R"))
 # -------------------------------------------
 # Read command line arguments
 # -------------------------------------------
@@ -55,16 +56,34 @@ lat <- input$latitude
 lon <- input$longitude
 
 # -------------------------------------------
-# .WTH file creation
+# .WTH file editing
 # -------------------------------------------
 
-file.copy(
-  normalizePath(file.path(script_dir, "..", "templates", "template-batch.WTH")),
-  "PRSM.WTH",
-  overwrite = TRUE
+weather_template_path <- normalizePath(
+  file.path(script_dir, "..", "templates", "template.WTH")
 )
 
-cat("Weather template copied\n")
+weather_template <- read_wth(weather_template_path)
+weather_general <- attr(weather_template, "GENERAL")
+
+weather_config <- list(
+  header = list(
+    INSI = "PRSM",
+    LAT = as.numeric(lat),
+    LONG = as.numeric(lon),
+    ELEV = weather_general$ELEV[1],
+    TAV = weather_general$TAV[1],
+    AMP = weather_general$AMP[1]
+  ),
+  data = weather_template
+)
+
+write_weather_file(
+  weather_config,
+  template_path = weather_template_path
+)
+
+cat("Weather template edited\n")
 
 # -------------------------------------------
 # .SOL file creation
