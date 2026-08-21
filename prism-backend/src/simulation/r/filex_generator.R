@@ -127,8 +127,9 @@ generate_filex <- function(template_path, lat, lon, management, batch_mode = FAL
 # ------------------------------------------------
 # Harvest
 # ------------------------------------------------
-# Let DSSAT determine maturity automatically
-  filex$`HARVEST DETAILS`$HDATE[1] <- NA
+  filex$`HARVEST DETAILS`$HDATE[1] <- to_dssat_date(
+    management$harvestDate
+  )
 
   plant_date <- as.Date(management$planting$date)
   sdate <- plant_date - 10
