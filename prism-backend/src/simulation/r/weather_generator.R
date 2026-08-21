@@ -4,6 +4,10 @@ suppressPackageStartupMessages({
   library(DSSAT)
 })
 
+WEATHER_TEMPLATE_PATH <- normalizePath(
+  file.path(script_dir, "..", "templates", "template.WTH")
+)
+
 fetch_power_weather <- function(lon, lat, from, to, pars, res, src, output_path = NULL){
 
   start_date <- format(as.Date(from), "%Y%m%d")
@@ -142,26 +146,36 @@ generate_weather_config <- function(lat, lon, start_year, end_year, elevation = 
 
 write_weather_file <- function(weather_config, file_name="PRSM.WTH"){
 
-  write_wth(
-    wth = weather_config$data,
-    file_name = file_name,
-    force_std_fmt = TRUE,
+  weather <- read_wth(WEATHER_TEMPLATE_PATH)
+  weather_data <- weather_config$data
 
-    location = "PRSM",
-    comments = NULL,
-
-    INSI = weather_config$header$INSI,
-    LAT  = weather_config$header$LAT,
-    LONG = weather_config$header$LONG,
-    ELEV = weather_config$header$ELEV,
-
-    TAV = weather_config$header$TAV,
-    AMP = weather_config$header$AMP,
-
-    REFHT = NULL,
-    WNDHT = NULL,
-    CO2   = NULL
+  template_dates <- as.POSIXct(
+    as.Date(
+      paste0(
+        2000 + weather_data$DATE %/% 1000,
+        "-01-01"
+      )
+    ) + weather_data$DATE %% 1000 - 1,
+    tz = "UTC"
   )
+
+  weather <- weather[rep(1, nrow(weather_data)), , drop = FALSE]
+  weather$DATE <- template_dates
+  weather$SRAD <- weather_data$SRAD
+  weather$TMAX <- weather_data$TMAX
+  weather$TMIN <- weather_data$TMIN
+  weather$RAIN <- weather_data$RAIN
+
+  general <- attr(weather, "GENERAL")
+  general$INSI <- weather_config$header$INSI
+  general$LAT <- weather_config$header$LAT
+  general$LONG <- weather_config$header$LONG
+  general$ELEV <- weather_config$header$ELEV
+  general$TAV <- weather_config$header$TAV
+  general$AMP <- weather_config$header$AMP
+  attr(weather, "GENERAL") <- general
+
+  write_wth(weather, file_name = file_name, force_std_fmt = TRUE)
 
   cat("Weather file written:", file_name, "\n")
 }
