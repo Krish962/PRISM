@@ -22,7 +22,7 @@ script_dir <- dirname(normalizePath(script_path))
 # -------------------------------------------
 
 source(file.path(script_dir, "soil_generator.R"))
-source(file.path(script_dir, "filex_generator.R"))
+source(file.path(script_dir, "batch_filex_generator.R"))
 source(file.path(script_dir, "weather_generator.R"))
 # -------------------------------------------
 # Read command line arguments
@@ -102,19 +102,18 @@ cat("Soil pipeline finished\n")
 # -------------------------------------------
 
 input <- jsonlite::fromJSON(input_file)
-management <- input$management
+treatments <- input$treatments
 
 template_path <- normalizePath(file.path(script_dir, "..", "templates", "template-batch.RIX"))
 
-filex <- generate_filex(
+filex <- generate_batch_filex(
 template_path,
 lat,
 lon,
-management,
-batch_mode = TRUE
+treatments
 )
 
-write_filex_file(filex)
+write_batch_filex_file(filex)
 
 
 cat("FileX pipeline finished\n")

@@ -1,19 +1,27 @@
 import axios from "axios";
 
+// Check if we are running in local development mode
+const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+
+// Get the env variable, if any
 const configuredApiUrl = import.meta.env.VITE_API_URL;
 
-if (!configuredApiUrl && import.meta.env.PROD) {
-  throw new Error("VITE_API_URL must be configured for production builds");
+if (!isLocal && !configuredApiUrl && import.meta.env.PROD) {
+  console.warn("VITE_API_URL is not configured for production build");
 }
 
-const apiBaseUrl = configuredApiUrl || "http://localhost:5000";
+// Force localhost if running locally, otherwise use env var (or fallback to same origin)
+const rawBaseUrl = isLocal ? "http://localhost:5000" : (configuredApiUrl || window.location.origin);
+
+// Clean the base URL (strip off any accidental /api/simulation/run suffixes from the env file)
+const cleanBaseUrl = rawBaseUrl.replace(/\/api\/(simulation|batch).*$/, "").replace(/\/$/, "");
 
 const simulationAPI = axios.create({
-  baseURL: `${apiBaseUrl}/api/simulation`
+  baseURL: `${cleanBaseUrl}/api/simulation`
 });
 
 const batchAPI = axios.create({
-  baseURL: `${apiBaseUrl}/api/batch`
+  baseURL: `${cleanBaseUrl}/api/batch`
 });
 
 export const runSimulation = async (payload) => {

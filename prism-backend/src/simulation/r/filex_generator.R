@@ -114,14 +114,52 @@ generate_filex <- function(template_path, lat, lon, management, batch_mode = FAL
     fert <- management$fertilizerSchedules
 
     fert_tier <- filex$`FERTILIZERS (INORGANIC)`
+    
+    # Create a clean template row
+    f_clean <- fert_tier[1, ]
+    f_clean$FDATE <- NA
+    f_clean$FMCD <- "FE005"
+    f_clean$FACD <- "AP002"
+    f_clean$FDEP <- 5
+    f_clean$FAMN <- NA
+    f_clean$FAMP <- NA
+    f_clean$FAMK <- NA
+    f_clean$FAMC <- NA
+    f_clean$FAMO <- NA
+    f_clean$FOCD <- NA
 
-    fert_tier <- fert_tier[rep(1, nrow(fert)), ]
+    f_tier <- f_clean[rep(1, nrow(fert)), ]
+    f_tier$F <- 1
+    f_tier$FDATE <- as.POSIXct(fert$date, tz="UTC")
+    
+    for (j in seq_len(nrow(fert))) {
+      type <- fert$type[j]
+      amount <- as.numeric(fert$amount[j])
+      
+      if (type == "DAP") {
+        f_tier$FMCD[j] <- "FE013"
+        f_tier$FAMP[j] <- amount
+        f_tier$FAMN[j] <- 0
+      } else if (type == "MOP") {
+        f_tier$FMCD[j] <- "FE007"
+        f_tier$FAMK[j] <- amount
+        f_tier$FAMN[j] <- 0
+      } else if (type == "UREA") {
+        f_tier$FMCD[j] <- "FE005"
+        f_tier$FAMN[j] <- amount
+      } else if (type == "FE661" || type == "ORGANIC") {
+        f_tier$FMCD[j] <- "FE661"
+        f_tier$FACD[j] <- "AP006"
+        f_tier$FDEP[j] <- 0
+        f_tier$FAMO[j] <- amount
+        f_tier$FAMN[j] <- 0
+      } else {
+        f_tier$FMCD[j] <- type 
+        f_tier$FAMN[j] <- amount
+      }
+    }
 
-    fert_tier$F <- 1
-    fert_tier$FDATE <- as.POSIXct(fert$date, tz="UTC")
-    fert_tier$FAMN  <- as.numeric(fert$amount)
-
-    filex$`FERTILIZERS (INORGANIC)` <- fert_tier
+    filex$`FERTILIZERS (INORGANIC)` <- f_tier
   }
 
 # ------------------------------------------------
@@ -132,7 +170,7 @@ generate_filex <- function(template_path, lat, lon, management, batch_mode = FAL
   )
 
   plant_date <- as.Date(management$planting$date)
-  sdate <- plant_date - 10
+  sdate <- plant_date
   filex$`SIMULATION CONTROLS`$SDATE[1] <- as.POSIXct(sdate)
 
   return(filex)

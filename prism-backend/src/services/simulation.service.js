@@ -57,8 +57,8 @@ export async function runSimulation(inputData) {
         reject(err);
       } finally {
         console.log("Simulation finished:", simId);
-        console.log("Cleaning simulation folder:", simDir);
-        //fs.rmSync(simDir, { recursive: true, force: true });
+        console.log("DEBUG: Leaving simulation folder for validation:", simDir);
+        // fs.rmSync(simDir, { recursive: true, force: true });
       }
 
     });

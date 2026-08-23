@@ -4,7 +4,7 @@ export async function buildSimulationInput(requestBody) {
 
   const latitude = requestBody.location.latitude;
   const longitude = requestBody.location.longitude;
-  const trtno = requestBody.trtno;
+  const trtno = requestBody.treatments ? requestBody.treatments.length : requestBody.trtno;
 
   const soil = await getNearestSoil(latitude, longitude);
 
@@ -23,7 +23,8 @@ export async function buildSimulationInput(requestBody) {
       layers: soil.layers
     },
 
-    management: requestBody.management
+    management: requestBody.management,
+    treatments: requestBody.treatments
   };
 
   //console.log(inputData.soil);

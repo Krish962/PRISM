@@ -1,83 +1,252 @@
-## PRISM – Paddy Rice Integrated Simulation Model
+# PRISM
 
-PRISM is a web-based decision support system for simulating paddy rice growth using the DSSAT CERES-Rice model. It combines a React-based frontend with a Node.js + R backend to provide an end-to-end simulation and analysis pipeline.
+PRISM is a web-based decision support system for rice crop simulation and sustainability analysis. It combines a React frontend, a Node.js/Express API, and R-based DSSAT integration to help users assess crop performance under different management, soil, and climate scenarios.
 
----
+The system supports:
 
-## System Overview
-Frontend (React)
-->
-Backend API (Node.js / Express)
-->
-R Integration (DSSAT Execution)
-->
-Output Parsing -> JSON -> Frontend Visualization
-
+- Single-run crop simulations
+- Batch simulations for multiple scenarios
+- Soil lookup by latitude/longitude
+- Yield, biomass, canopy, and growth-duration analysis
+- Energy, CO₂, and water-footprint calculations
+- Result visualization in the frontend
 
 ---
 
-## Frontend (React + Vite)
+## Project overview
 
-The frontend provides an intuitive interface for configuring simulations and visualizing results.
+PRISM follows a three-layer architecture:
 
-### Features
+1. Frontend: React + Vite user interface
+2. Backend: Express API for request handling and orchestration
+3. Simulation layer: R scripts that generate DSSAT inputs and execute the crop model
 
-- **Simulation Form**
-  - Location input (manual + geolocation)
-  - Crop selection (cultivar dropdown)
-  - Planting parameters (date, method, spacing, depth)
-  - Dynamic irrigation & fertilizer scheduling
-  - Harvest date input
+The general flow is:
 
-- **Validation**
-  - Ensures required inputs are present
-  - Supports optional management practices
-
-- **API Integration**
-  - Sends structured payload to backend
-  - Handles asynchronous simulation execution
-
-- **Results Visualization**
-  - Yield, Biomass, Harvest Index
-  - Max LAI and Growth Duration
-  - Charts (Recharts):
-    - LAI growth curve
-    - Biomass accumulation curve
+Frontend -> Backend API -> Build simulation input -> R script -> DSSAT model -> Parse output -> JSON response -> Frontend charts and analysis
 
 ---
 
-## Backend (Node.js + Express + R)
+## Key features
 
-The backend manages simulation execution, DSSAT integration, and output processing.
+### Crop simulation
+- Single simulation workflow with site and management parameters
+- Batch simulation workflow for multi-scenario analyses
+- Integration with DSSAT CERES-Rice model via R scripts
+- Soil profile selection based on nearest matching soil data
 
-### Features
+### Data and analysis
+- Input building from user form data
+- Simulation output parsing into structured JSON
+- Time series for LAI and biomass
+- Key metrics such as yield, biomass, harvest index, maximum LAI, and growth duration
 
-- **REST API**
-  - Endpoint: `/api/simulation/run`
-  - Accepts structured simulation input
+### Sustainability modules
+- Energy analysis based on human labor, animal labor, fuel, fertilizer, seed, and machinery
+- CO₂ footprint estimation from field emissions, energy use, and fertilizer-related inputs
+- Water footprint estimation using green, blue, and grey water components
 
-- **Simulation Engine**
-  - Node.js spawns R script (`run_dssat.R`)
-  - R prepares DSSAT input files and runs CERES-Rice model
+### User experience
+- Route-based pages for simulation, batch simulation, and result review
+- Recharts-based visual output for crop growth curves
+- Dedicated pages for energy, CO₂, and water footprint analysis
 
-- **Temporary File Management**
-  - Each simulation runs in an isolated temp directory
-  - Stores DSSAT files (`.OUT`, `.WTH`, `.SOL`, etc.)
+---
 
-- **Output Parsing**
-  - Reads `PlantGro.OUT`
-  - Extracts:
-    - Yield (GWAD)
-    - Biomass (CWAD)
-    - Harvest Index (HIAD)
-    - Max LAI (LAID)
-    - Growth duration (DAS)
+## Tech stack
 
-- **Time-Series Extraction**
-  - LAI over time
-  - Biomass over time
+### Frontend
+- React 19
+- Vite
+- React Router
+- Recharts
+- Axios
 
-- **Response Format**
+### Backend
+- Node.js
+- Express 5
+- MongoDB via Mongoose (optional / graceful fallback)
+- dotenv
+- CORS
+
+### Simulation engine
+- Rscript
+- DSSAT model assets included in the project under the backend simulation directory
+- Output parsing through Node + R workflow
+
+---
+
+## Repository structure
+
+```text
+PRISM/
+├── README.md
+├── prism-backend/
+│   ├── Dockerfile
+│   ├── package.json
+│   └── src/
+│       ├── app.js
+│       ├── server.js
+│       ├── config/
+│       │   ├── db.config.js
+│       │   └── env.config.js
+│       ├── controllers/
+│       │   ├── batchSimulation.controller.js
+│       │   ├── energy.controller.js
+│       │   └── simulation.controller.js
+│       ├── data-access/
+│       │   ├── climate.repository.js
+│       │   ├── job.repository.js
+│       │   ├── soil.repository.js
+│       │   └── variety.repository.js
+│       ├── models/
+│       │   ├── climate.model.js
+│       │   ├── soil.model.js
+│       │   └── variety.model.js
+│       ├── routes/
+│       │   ├── batch.routes.js
+│       │   ├── energy.routes.js
+│       │   └── simulation.routes.js
+│       ├── services/
+│       │   ├── batchSimulation.service.js
+│       │   ├── buildInput.service.js
+│       │   └── simulation.service.js
+│       ├── simulation/
+│       │   ├── DSSAT48/
+│       │   ├── dssat-csm-os/
+│       │   ├── r/
+│       │   └── templates/
+│       ├── utils/
+│       │   └── tempDir.js
+│       └── workers/
+├── prism-frontend/
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── public/
+│   └── src/
+│       ├── App.jsx
+│       ├── main.jsx
+│       ├── index.css
+│       ├── components/
+│       ├── pages/
+│       ├── services/
+│       └── utils/
+└──
+```
+
+---
+
+## Runtime architecture
+
+### Frontend routes
+The frontend uses React Router to expose the following views:
+
+- `/` - home page
+- `/simulation` - single simulation form
+- `/batch` - batch simulation form
+- `/batch-results` - batch results page
+- `/results` - simulation result visualization
+- `/energy` - energy calculation page
+- `/co2` - CO₂ footprint estimator
+- `/h2o` - water footprint estimator
+
+### Backend routes
+The API is mounted under `/api` and includes:
+
+| Route | Method | Purpose |
+| --- | --- | --- |
+| `/api/simulation/run` | POST | Run a single DSSAT crop simulation |
+| `/api/batch/run` | POST | Run a batch set of simulations |
+| `/api/energy/calculate` | POST | Compute farm energy input/output balance |
+| `/health` | GET | Health check for backend service |
+
+---
+
+## Environment configuration
+
+### Backend
+Create a `.env` file inside `prism-backend` with values such as:
+
+```env
+PORT=5000
+FRONTEND_URL=http://localhost:5173
+MONGO_URI=mongodb://localhost:27017/prism
+MONGO_DB_NAME=prism
+NODE_ENV=development
+```
+
+Notes:
+- `FRONTEND_URL` is required for CORS.
+- If MongoDB is not available, the server still starts and logs a warning, as implemented in the app startup flow.
+
+### Frontend
+Create a `.env` file inside `prism-frontend` with:
+
+```env
+VITE_API_URL=http://localhost:5000
+```
+
+If `VITE_API_URL` is not set in production, the app throws an error during build.
+
+---
+
+## Local setup
+
+### 1) Install backend dependencies
+
+```bash
+cd prism-backend
+npm install
+```
+
+### 2) Install frontend dependencies
+
+```bash
+cd prism-frontend
+npm install
+```
+
+### 3) Start the backend
+
+```bash
+cd prism-backend
+npm run dev
+```
+
+This starts the Express API on the configured backend port.
+
+### 4) Start the frontend
+
+```bash
+cd prism-frontend
+npm run dev
+```
+
+The frontend should be available through the Vite development server, usually on:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## Simulation flow
+
+1. The user enters location, crop, management, and simulation inputs in the frontend.
+2. The frontend builds a structured payload and sends it to the backend.
+3. The backend resolves the nearest soil profile for the provided geographic coordinates.
+4. The backend prepares the simulation input object and invokes the R-based execution process.
+5. The R job runs the DSSAT model using the project templates and model files.
+6. The output is parsed into structured metrics like yield, biomass, harvest index, and growth series.
+7. The result is returned to the frontend for charting and analysis.
+
+---
+
+## Output example
+
+The backend returns structured JSON similar to:
+
 ```json
 {
   "yield_kg_ha": 3019,
@@ -85,24 +254,52 @@ The backend manages simulation execution, DSSAT integration, and output processi
   "harvest_index": 0.614,
   "max_lai": 1.08,
   "growth_duration": 109,
-
   "lai_series": [
     { "day": 11, "lai": 0.09 },
     { "day": 12, "lai": 0.08 }
   ],
-
   "biomass_series": [
     { "day": 11, "biomass": 138 },
     { "day": 12, "biomass": 138 }
   ]
 }
 ```
-## Data Flow
 
-1. User inputs simulation parameters via frontend
-2. Frontend validates and builds payload
-3. Backend receives request and starts simulation
-4. R script runs DSSAT model
-5. Output files are generated (PlantGro.OUT)
-6. Backend parses results into JSON
-7. Frontend visualizes results
+---
+
+## Development notes
+
+- The simulation backend uses temporary directories under the OS temp folder for each run.
+- The project is designed around reproducible crop modeling rather than a database-first architecture.
+- The R and DSSAT assets are included in the repository, enabling local execution with proper R installation.
+- MongoDB is present for optional persistence but is not required to run the app in a basic local setup.
+
+---
+
+## Production build
+
+### Frontend
+
+```bash
+cd prism-frontend
+npm run build
+```
+
+### Backend
+
+```bash
+cd prism-backend
+npm start
+```
+
+---
+
+## Notes
+
+PRISM is intended to support agricultural planning and research by helping users investigate how soil, climate, and management decisions affect rice productivity and sustainability metrics. The platform is especially useful for exploring yield performance alongside environmental impact indicators.
+
+---
+
+## License
+
+This project currently declares the backend license as ISC in the package metadata. Review the package configuration and project-specific legal requirements before publishing or deploying the solution externally.
