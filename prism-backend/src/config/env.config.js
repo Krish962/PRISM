@@ -1,15 +1,14 @@
 import dotenv from "dotenv";
 
 dotenv.config();
+//This reads the .env file from the project root and injects each key-value pair directly into Node.js’s global process.env object.
 
-const nodeEnv = process.env.NODE_ENV || "development";
+const nodeEnv = process.env.NODE_ENV;
 
 export const env = {
-  PORT: process.env.PORT || (nodeEnv === "production" ? 10000 : 5000),
+  PORT: process.env.PORT,
   MONGO_URI: process.env.MONGO_URI,
-  MONGO_DB_NAME: process.env.MONGO_DB_NAME || "prism",
-  FRONTEND_URL:
-    process.env.FRONTEND_URL ||
-    (nodeEnv === "development" ? "http://localhost:5173" : undefined),
+  MONGO_DB_NAME: process.env.MONGO_DB_NAME,
+  FRONTEND_URL: process.env.FRONTEND_URL,
   NODE_ENV: nodeEnv
 };

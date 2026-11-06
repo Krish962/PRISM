@@ -17,13 +17,26 @@ const climateSchema = new mongoose.Schema({
   latitude: { type: Number, required: true },
   longitude: { type: Number, required: true },
 
+  location: {
+    type: {
+      type: String,
+      enum: ["Point"],
+      default: "Point",
+      required: true
+    },
+    coordinates: {
+      type: [Number], // [longitude, latitude]
+      required: true
+    }
+  },
+
   elevation: { type: Number, default: 0 }, // meters (needed for DSSAT)
 
-  resolution_deg: { type: Number, default: 0.25 },
+  resolution_deg: { type: Number, default: 0.5 },
 
   year: { type: Number, required: true },
 
-  source: { type: String, default: "NASA POWER" },
+  source: { type: String, default: "NASA POWER Bulk" },
 
   daily: {
     type: [dailyClimateSchema],
@@ -39,10 +52,22 @@ const climateSchema = new mongoose.Schema({
   }
 });
 
+// Auto-populate GeoJSON coordinates if not provided
+climateSchema.pre("save", function (next) {
+  if (!this.location || !this.location.coordinates || this.location.coordinates.length === 0) {
+    this.location = {
+      type: "Point",
+      coordinates: [this.longitude, this.latitude]
+    };
+  }
+  if (typeof next === "function") next();
+});
+
 // Grid lookup
 climateSchema.index({ grid_id: 1, year: 1 }, { unique: true });
 
-// Useful for nearest-grid queries
+// Geospatial and spatial indexes for nearest-grid queries
+climateSchema.index({ location: "2dsphere" });
 climateSchema.index({ latitude: 1, longitude: 1 });
 
 export default mongoose.model("Climate", climateSchema);

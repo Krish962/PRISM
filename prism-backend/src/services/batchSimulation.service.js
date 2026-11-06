@@ -22,8 +22,6 @@ export async function runBatchSimulationService(inputData) {
   const inputPath = path.join(simDir, "input.json");
   const outputPath = path.join(simDir, "output.json");
 
-  //console.log(JSON.stringify(inputData, null, 2));
-
   fs.writeFileSync(inputPath, JSON.stringify(inputData, null, 2));
 
   return new Promise((resolve, reject) => {
@@ -79,7 +77,7 @@ export async function runBatchSimulationService(inputData) {
       } finally {
         console.log("Simulation finished:", simId);
         console.log("DEBUG: Leaving simulation folder for validation:", simDir);
-        // fs.rmSync(simDir, { recursive: true, force: true });
+        fs.rmSync(simDir, { recursive: true, force: true });
       }
 
     });

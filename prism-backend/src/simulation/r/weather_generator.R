@@ -56,67 +56,163 @@ fetch_power_weather <- function(lon, lat, from, to, pars, res, src, output_path 
   list(WEATHER_DAILY = weather_data)
 }
 
-generate_weather_config <- function(lat, lon, start_year, end_year, elevation = 50){
+extract_db_weather_df <- function(climate) {
+  if (is.null(climate) || is.null(climate$records)) return(NULL)
+  records <- climate$records
+  if (length(records) == 0) return(NULL)
 
-  cat("Downloading weather from NASA POWER\n")
+  dfs <- list()
+
+  if (is.data.frame(records)) {
+    for (i in seq_len(nrow(records))) {
+      yr <- records$year[i]
+      daily_obj <- records$daily[i]
+      if (is.list(daily_obj) && !is.data.frame(daily_obj)) {
+        df <- as.data.frame(daily_obj[[1]])
+      } else {
+        df <- as.data.frame(daily_obj)
+      }
+      df$YEAR <- as.integer(yr)
+      dfs[[i]] <- df
+    }
+  } else if (is.list(records)) {
+    for (i in seq_along(records)) {
+      rec <- records[[i]]
+      yr <- rec$year
+      df <- as.data.frame(rec$daily)
+      df$YEAR <- as.integer(yr)
+      dfs[[i]] <- df
+    }
+  }
+
+  if (length(dfs) == 0) return(NULL)
+
+  combined <- bind_rows(dfs)
+  required_cols <- c("YEAR", "doy", "srad", "tmax", "tmin", "rain")
+  if (!all(required_cols %in% names(combined))) {
+    return(NULL)
+  }
+
+  combined <- combined %>%
+    transmute(
+      DATE = as.Date(paste0(YEAR, "-", doy), format = "%Y-%j"),
+      SRAD = as.numeric(srad),
+      TMAX = as.numeric(tmax),
+      TMIN = as.numeric(tmin),
+      RAIN = as.numeric(rain)
+    ) %>%
+    filter(!is.na(DATE)) %>%
+    arrange(DATE)
+
+  return(combined)
+}
+
+generate_weather_config <- function(lat, lon, start_year, end_year, elevation = 50, input = NULL){
 
   # ensure numeric values
   lat <- as.numeric(lat)
   lon <- as.numeric(lon)
 
-  # NASA POWER currently has data only up to 2025. For requests that extend
-  # beyond that year, use the 2005-2025 daily climatology for all requested
-  # dates instead of duplicating a single year.
-  use_climatology <- end_year > 2025
+  # Check if pre-loaded weather data is available from database via input.json
+  db_weather_df <- NULL
+  if (!is.null(input) && !is.null(input$climate)) {
+    db_weather_df <- extract_db_weather_df(input$climate)
+    if (!is.null(input$climate$elevation) && is.numeric(input$climate$elevation)) {
+      elevation <- as.numeric(input$climate$elevation)
+    }
+  }
 
-  download_start_year <- if (use_climatology) 2005 else start_year
-  download_end_year   <- if (use_climatology) 2025 else end_year
+  if (!is.null(db_weather_df) && nrow(db_weather_df) > 0) {
+    grid_name <- ifelse(!is.null(input$climate$grid_id), input$climate$grid_id, "DB_GRID")
+    cat("Using pre-loaded weather data from database for grid:", grid_name, "\n")
 
-  weather <- fetch_power_weather(
-    lon = lon,
-    lat = lat,
-    pars = c("air_temperature","precipitation","solar_radiation"),
-    res = "daily",
-    from = paste0(download_start_year, "-01-01"),
-    to   = paste0(download_end_year, "-12-31"),
-    src  = "nasa_power"
-  )
+    req_start <- as.Date(paste0(start_year, "-01-01"))
+    req_end   <- as.Date(paste0(end_year, "-12-31"))
 
-  daily <- weather$WEATHER_DAILY
+    # If requested date range is within database records, filter to range
+    has_exact_range <- min(db_weather_df$DATE) <= req_start && max(db_weather_df$DATE) >= req_end
 
-  if (use_climatology) {
-    weather_average <- daily %>%
-      transmute(
-        MONTH_DAY = format(as.Date(YYYYMMDD), "%m-%d"),
-        SRAD = ALLSKY_SFC_SW_DWN,
-        TMAX = T2M_MAX,
-        TMIN = T2M_MIN,
-        RAIN = PRECTOTCORR
-      ) %>%
-      group_by(MONTH_DAY) %>%
-      summarise(
-        across(c(SRAD, TMAX, TMIN, RAIN), ~ mean(.x, na.rm = TRUE)),
-        .groups = "drop"
-      )
+    if (has_exact_range) {
+      weather_df <- db_weather_df %>%
+        filter(DATE >= req_start & DATE <= req_end) %>%
+        arrange(DATE)
+    } else {
+      # Use daily climatology from available database years
+      cat("Requested dates outside database range; applying climatology average\n")
+      weather_average <- db_weather_df %>%
+        transmute(
+          MONTH_DAY = format(DATE, "%m-%d"),
+          SRAD = SRAD,
+          TMAX = TMAX,
+          TMIN = TMIN,
+          RAIN = RAIN
+        ) %>%
+        group_by(MONTH_DAY) %>%
+        summarise(
+          across(c(SRAD, TMAX, TMIN, RAIN), ~ mean(.x, na.rm = TRUE)),
+          .groups = "drop"
+        )
 
-    weather_df <- tibble(DATE = seq(
-      as.Date(paste0(start_year, "-01-01")),
-      as.Date(paste0(end_year, "-12-31")),
-      by = "day"
-    )) %>%
-      mutate(MONTH_DAY = format(DATE, "%m-%d")) %>%
-      left_join(weather_average, by = "MONTH_DAY") %>%
-      select(-MONTH_DAY)
+      weather_df <- tibble(DATE = seq(req_start, req_end, by = "day")) %>%
+        mutate(MONTH_DAY = format(DATE, "%m-%d")) %>%
+        left_join(weather_average, by = "MONTH_DAY") %>%
+        select(-MONTH_DAY)
+    }
+
   } else {
-    weather_df <- daily %>%
-      transmute(
-        DATE = as.Date(YYYYMMDD),
-        SRAD = ALLSKY_SFC_SW_DWN,
-        TMAX = T2M_MAX,
-        TMIN = T2M_MIN,
-        RAIN = PRECTOTCORR
-      ) %>%
-      arrange(DATE)
+    # Fallback to live NASA POWER API
+    cat("Database weather not available. Fallback: Downloading weather from NASA POWER API\n")
+
+    use_climatology <- end_year > 2025
+    download_start_year <- if (use_climatology) 2005 else start_year
+    download_end_year   <- if (use_climatology) 2025 else end_year
+
+    weather <- fetch_power_weather(
+      lon = lon,
+      lat = lat,
+      pars = c("air_temperature","precipitation","solar_radiation"),
+      res = "daily",
+      from = paste0(download_start_year, "-01-01"),
+      to   = paste0(download_end_year, "-12-31"),
+      src  = "nasa_power"
+    )
+
+    daily <- weather$WEATHER_DAILY
+
+    if (use_climatology) {
+      weather_average <- daily %>%
+        transmute(
+          MONTH_DAY = format(as.Date(YYYYMMDD), "%m-%d"),
+          SRAD = ALLSKY_SFC_SW_DWN,
+          TMAX = T2M_MAX,
+          TMIN = T2M_MIN,
+          RAIN = PRECTOTCORR
+        ) %>%
+        group_by(MONTH_DAY) %>%
+        summarise(
+          across(c(SRAD, TMAX, TMIN, RAIN), ~ mean(.x, na.rm = TRUE)),
+          .groups = "drop"
+        )
+
+      weather_df <- tibble(DATE = seq(
+        as.Date(paste0(start_year, "-01-01")),
+        as.Date(paste0(end_year, "-12-31")),
+        by = "day"
+      )) %>%
+        mutate(MONTH_DAY = format(DATE, "%m-%d")) %>%
+        left_join(weather_average, by = "MONTH_DAY") %>%
+        select(-MONTH_DAY)
+    } else {
+      weather_df <- daily %>%
+        transmute(
+          DATE = as.Date(YYYYMMDD),
+          SRAD = ALLSKY_SFC_SW_DWN,
+          TMAX = T2M_MAX,
+          TMIN = T2M_MIN,
+          RAIN = PRECTOTCORR
+        ) %>%
+        arrange(DATE)
+    }
   }
 
   tav <- calc_TAV(weather_df)

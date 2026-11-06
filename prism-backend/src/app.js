@@ -19,6 +19,7 @@ app.use(
 );
 
 app.use(express.json());
+//express.json is a middleware that parses incoming requests with JSON payloads and makes them available on req.body.
 
 app.get("/health", (req, res) => {
   res.json({

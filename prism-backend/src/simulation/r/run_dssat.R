@@ -69,7 +69,8 @@ weather_config <- generate_weather_config(
 lat,
 lon,
 start_year,
-end_year
+end_year,
+input = input
 )
 
 write_weather_file(weather_config)

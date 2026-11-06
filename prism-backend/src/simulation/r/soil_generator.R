@@ -80,7 +80,7 @@ prism_generate_soil_profile <- function(soil){
 }
 
 # ------------------------------------------------
-# Generate DSSAT .SOL (FINAL FIXED VERSION)
+# Generate DSSAT .SOL 
 # ------------------------------------------------
 generate_soil_config <- function(input){
 
